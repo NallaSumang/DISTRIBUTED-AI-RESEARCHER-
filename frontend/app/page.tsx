@@ -17,8 +17,7 @@ export default function Home() {
   const [jobId, setJobId] = useState<string | null>(null);
   const [report, setReport] = useState("");
   const [history, setHistory] = useState<any[]>([]);
-
-  const API_BASE = "http://127.0.0.1:8000"; 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
 
   // Function to pull "Memory" from Supabase
   const fetchHistory = async () => {
