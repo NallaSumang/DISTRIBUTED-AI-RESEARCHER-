@@ -17,22 +17,29 @@ export default function Home() {
   const [jobId, setJobId] = useState<string | null>(null);
   const [report, setReport] = useState("");
   const [history, setHistory] = useState<any[]>([]);
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+
+  // Correctly handles the transition from local development to cloud production
+  const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000").replace(/\/$/, ""); 
 
   // Function to pull "Memory" from Supabase
   const fetchHistory = async () => {
-    const { data, error } = await supabase
-      .from("research_history")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(8);
-    if (data) setHistory(data);
-    if (error) console.error("Memory Fetch Error:", error);
+    try {
+      const { data, error } = await supabase
+        .from("research_history")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(8);
+      if (data) setHistory(data);
+      if (error) console.error("Memory Fetch Error:", error);
+    } catch (err) {
+      console.error("Supabase connection failed:", err);
+    }
   };
 
   useEffect(() => {
     fetchHistory(); // Load memory on startup
     let interval: NodeJS.Timeout;
+
     if (jobId && loading) {
       interval = setInterval(async () => {
         try {
@@ -45,7 +52,9 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
             fetchHistory(); // Refresh sidebar when new research is done
             clearInterval(interval);
           }
-        } catch (err) { console.error("Polling failed:", err); }
+        } catch (err) { 
+          console.error("Polling failed:", err); 
+        }
       }, 2000);
     }
     return () => clearInterval(interval);
@@ -55,12 +64,24 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
     if (!query || loading) return;
     setLoading(true);
     setReport("");
+
     try {
-      const res = await fetch(`${API_BASE}/api/research?query=${encodeURIComponent(query)}`, { method: "POST" });
+      // Matches the POST expectation of your FastAPI backend
+      const res = await fetch(`${API_BASE}/api/research`, { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: query }) 
+      });
+
+      if (!res.ok) throw new Error("Backend connection failed");
+
       const data = await res.json();
       setJobId(data.job_id);
     } catch (err) {
-      alert("Backend Offline! Ensure main.py is running.");
+      console.error("Search Error:", err);
+      alert("Backend Offline! Ensure your Hugging Face Space is 'Running'.");
       setLoading(false);
     }
   };
