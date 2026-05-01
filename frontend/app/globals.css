@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #030000;
+  --foreground: #fef2f2; /* red-50 */
 }
 
 @theme inline {
@@ -12,15 +12,36 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* CUSTOM NEON TRON SCROLLBARS */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(20, 0, 0, 0.5);
+  border-left: 1px solid rgba(220, 38, 38, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(220, 38, 38, 0.4);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 1);
+}
+
+/* Base Prose adjustments for Markdown */
+.prose pre {
+  background-color: rgba(20, 0, 0, 0.8) !important;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.05);
 }
