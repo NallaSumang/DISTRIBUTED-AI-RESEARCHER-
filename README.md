@@ -1,16 +1,23 @@
-**Distributed AI Researcher** is a high-performance, multi-agent engine designed for deep-dive information synthesis. Unlike traditional linear search tools, this system leverages a **swarming architecture** to decompose complex queries, perform parallel web research, and generate structured intelligence reports.
+# Distributed AI Researcher
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Online-success?style=for-the-badge)](https://distributed-ai-researcher.vercel.app)
+[![Tech Stack](https://img.shields.io/badge/Stack-Next.js_|_FastAPI_|_LangGraph-blue?style=for-the-badge)](#%EF%B8%8F-tech-stack)
+
+**Distributed AI Researcher** is a high-performance, multi-agent engine designed for deep-dive information synthesis. Unlike traditional linear search tools, this system leverages a distributed agentic architecture to decompose complex queries, execute parallel web research, and generate structured, context-rich intelligence reports.
+
+**[Launch Live Application](https://distributed-ai-researcher.vercel.app)**
 
 ---
 
 ## 🚀 System Architecture
 
-This project implements an **AI-Native** distributed workflow across specialized cloud layers to ensure low latency and high scalability:
+This project implements a decoupled, event-driven workflow across specialized cloud layers to ensure high availability and robust state management:
 
-*   **Frontend (Next.js & Vercel):** A cinematic, glassmorphic UI optimized for real-time status tracking and Markdown rendering.
-*   **Orchestration Layer (FastAPI & Docker):** A high-throughput API gateway that manages the task lifecycle and secures the environment.
-*   **Neural Swarm (LangGraph & Groq):** An agentic loop that utilizes **Llama 3.3 70B** to plan, execute, and refine research paths.
-*   **Neural Memory (Supabase):** A persistent database for long-term storage and retrieval of research history.
-*   **Task Queue (Upstash Redis):** An asynchronous bridge between the web interface and the background workers.
+* **Client Interface (Next.js & Vercel):** A highly responsive, server-side rendered UI optimized for real-time WebSocket status tracking and dynamic Markdown streaming.
+* **Orchestration Gateway (FastAPI & Docker):** A high-throughput REST API that manages the task lifecycle, handles rate limiting, and secures the inference environment.
+* **Agentic Engine (LangGraph & Groq):** An iterative reasoning loop utilizing **Llama 3.3 70B** to dynamically plan, execute, and refine multi-step research paths.
+* **State Management (Supabase Postgres):** A persistent relational database handling long-term storage and retrieval of research artifacts and conversation history.
+* **Message Broker (Upstash Redis):** An asynchronous queue decoupling the web interface from background worker processes to prevent blocking operations.
 
 ---
 
@@ -18,48 +25,34 @@ This project implements an **AI-Native** distributed workflow across specialized
 
 | Layer | Technology |
 | :--- | :--- |
-| **User Interface** | Next.js 14, Tailwind CSS, Framer Motion |
-| **Logic & Agents** | LangGraph, LangChain, Python 3.11 |
+| **Frontend** | Next.js 14, Tailwind CSS, Framer Motion |
+| **Backend Orchestration** | FastAPI, Python 3.11, Docker |
+| **AI / Agent Framework** | LangChain, LangGraph |
 | **Inference Engine** | Llama 3.3 70B (via Groq) |
 | **Search Infrastructure** | DuckDuckGo Search API |
-| **Infrastructure** | Docker, Hugging Face Spaces, Vercel |
-| **Data Persistence** | Supabase (Postgres), Upstash (Redis) |
+| **Data Persistence** | Supabase (PostgreSQL), Upstash (Redis) |
+| **Deployment** | Vercel (UI), Hugging Face Spaces (Backend) |
 
 ---
 
-## ⚡ Key Features
+## ⚡ Core Capabilities
 
-*   **🕵️ Intelligent Planning:** The "Planner Agent" dynamically breaks down broad topics into targeted search queries.
-*   **🌐 Real-Time Synthesis:** Python-based search tools retrieve and analyze live web data for up-to-the-minute accuracy.
-*   **🧠 High-Fidelity Reasoning:** Powered by **Llama 3.3**, the industry standard for reasoning and versatile content generation.
-*   **💾 Distributed Reliability:** A decoupled worker-client architecture ensures the UI remains responsive while the "Brain" processes tasks.
+* **Dynamic Query Decomposition:** The Planner Agent breaks broad, ambiguous topics into targeted, executable search directives.
+* **Parallel Data Ingestion:** Custom Python tools retrieve, scrape, and filter live web data to ensure high-fidelity, up-to-the-minute accuracy.
+* **Advanced Reasoning:** Powered by Llama 3.3, the system evaluates conflicting data sources and synthesizes cohesive, hallucination-resistant reports.
+* **Fault-Tolerant Execution:** The decoupled worker-client architecture ensures UI responsiveness even during heavy, long-running agent execution tasks.
 
 ---
 
-## ⚙️ Setup & Deployment
+## ⚙️ Local Setup & Deployment
 
 ### Environment Variables
 
-To initialize the neural swarm, configure these variables in your environment:
+Configure the following variables in your respective environments to initialize the backend queue and frontend clients.
 
-**Backend (Hugging Face Secrets)**
-```bash
+**Backend (`.env` or Hugging Face Secrets)**
+```env
 GROQ_API_KEY=your_groq_key
-UPSTASH_REDIS_URI=your_rediss_url
+UPSTASH_REDIS_URI=your_redis_url
 SUPABASE_URL=your_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-Frontend (.env.local)
-
-Bash
-NEXT_PUBLIC_API_BASE=your_hugging_face_url
-NEXT_PUBLIC_SUPABASE_URL=your_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-Installation
-Clone: git clone https://github.com/yourusername/distributed-ai-researcher
-
-Dependencies: pip install -r requirements.txt (Backend) | npm install (Frontend)
-
-Launch: python main.py (Backend) | npm run dev (Frontend)
-
-[!IMPORTANT]
-This project is part of a portfolio focused on AI-Native Product Engineering, demonstrating expertise in agentic workflows, distributed systems, and real-time LLM integration.
