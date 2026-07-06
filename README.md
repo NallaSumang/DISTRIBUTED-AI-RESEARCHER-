@@ -6,7 +6,7 @@
 **Distributed AI Researcher** is a high-performance, multi-agent engine designed for deep-dive information synthesis. Unlike traditional linear search tools, this system leverages a distributed agentic architecture to decompose complex queries, execute parallel web research, and generate structured, context-rich intelligence reports.
 
 **[Launch Live Application](https://distributed-ai-researcher.vercel.app)**
-https://roadmap.sh/projects/openai-api-python
+
 ---
 
 ## 🚀 System Architecture
