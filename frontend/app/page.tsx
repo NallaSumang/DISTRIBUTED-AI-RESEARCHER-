@@ -85,9 +85,13 @@ export default function Home() {
     <div className="flex min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
       
       {/* BACKGROUND EFFECTS */}
-      <div className="fixed inset-0 z-0 bg-[#050505]">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-950/20 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-900/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none overflow-hidden">
+        {/* Animated Cyber Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#7f1d1d20_1px,transparent_1px),linear-gradient(to_bottom,#7f1d1d20_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_60%,transparent_100%)]" />
+        
+        {/* Glowing Orbs */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-950/30 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '5s' }} />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-900/10 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
       </div>
 
       {/* LEFT SIDEBAR: THE MEMORY */}
