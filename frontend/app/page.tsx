@@ -155,51 +155,52 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 relative z-10 overflow-y-auto custom-scrollbar">
-        <div className="max-w-4xl mx-auto p-10 md:p-20">
+      {/* MAIN CONTENT */}
+      <div className="flex-1 relative z-10 overflow-y-auto">
+        <div className="max-w-5xl mx-auto p-4 md:p-16 pt-8 md:pt-16">
           
-          {/* HEADER */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between mb-20 gap-8">
-            <div className="flex items-center gap-6">
-              <div className="bg-gradient-to-br from-red-950 to-[#050505] border border-white/[0.05] p-4 rounded-2xl shadow-[0_0_30px_rgba(127,29,29,0.1)]">
-                <Cpu size={24} className="text-red-800" strokeWidth={1.5} />
+          <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-32 gap-6 md:gap-0">
+            <div className="flex items-center gap-5">
+              <div className="bg-gradient-to-br from-red-950 to-[#050505] border border-white/[0.05] p-3 rounded-2xl shadow-[0_0_30px_rgba(127,29,29,0.1)]">
+                <Brain className="text-red-700/80" size={28} strokeWidth={1.5} />
               </div>
               <div>
-                <h1 className="text-xl font-light tracking-[0.1em] text-zinc-100">SWARM INTELLIGENCE</h1>
+                <h1 className="text-2xl md:text-3xl font-light tracking-[0.1em] text-zinc-100 mb-1">D<span className="text-red-900/60">/</span>AI</h1>
                 <div className="text-[9px] font-medium text-red-900/80 tracking-[0.4em] uppercase mt-1">Distributed Researcher</div>
               </div>
             </div>
             <div className="flex gap-4">
-               <div className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase transition-colors hover:bg-white/[0.02]">
+               <div className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase transition-colors hover:bg-white/[0.02]">
                  <Globe size={12} strokeWidth={1.5} /> Live Search
                </div>
-               <div className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_15px_rgba(127,29,29,0.1)]">
+               <div className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_15px_rgba(127,29,29,0.1)]">
                  <Zap size={12} strokeWidth={1.5} /> Llama 3.3
                </div>
             </div>
           </header>
 
           {/* SEARCH BOX */}
-          <div className="group relative mb-20">
+          <div className="group relative mb-12 md:mb-20">
             <div className="absolute -inset-1 bg-gradient-to-r from-red-950 to-transparent rounded-3xl blur-2xl opacity-10 group-hover:opacity-20 transition duration-1000" />
-            <div className="relative flex items-center bg-[#050505]/80 border border-white/[0.04] backdrop-blur-3xl rounded-3xl p-2 pl-8 shadow-2xl">
-              <Search className="text-zinc-600 mr-4" size={20} strokeWidth={1.5} />
-              <input
-                type="text"
-                className="w-full bg-transparent border-none py-6 text-lg font-light text-zinc-100 focus:outline-none placeholder:text-zinc-700 tracking-wide"
-                placeholder="Analyze a topic in depth..."
-                value={query}
-                maxLength={2000}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
+            <div className="relative flex flex-col md:flex-row items-stretch md:items-center bg-[#050505]/80 border border-white/[0.04] backdrop-blur-3xl rounded-3xl p-2 md:pl-8 shadow-2xl gap-2 md:gap-0">
+              <div className="flex items-center flex-1 px-4 md:px-0">
+                <Search className="text-zinc-600 mr-3 md:mr-4 shrink-0" size={20} strokeWidth={1.5} />
+                <input
+                  type="text"
+                  className="w-full bg-transparent border-none py-4 md:py-6 text-base md:text-lg font-light text-zinc-100 focus:outline-none placeholder:text-zinc-700 tracking-wide"
+                  placeholder="Analyze a topic in depth..."
+                  value={query}
+                  maxLength={2000}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                />
+              </div>
               <button 
                 onClick={handleSearch}
                 disabled={loading}
-                className="bg-zinc-100 text-black hover:bg-white disabled:bg-[#0a0a0a] disabled:text-zinc-700 px-12 py-6 rounded-2xl text-xs font-semibold transition-all duration-700 disabled:border disabled:border-white/[0.02] shadow-[0_0_20px_rgba(255,255,255,0.05)] uppercase tracking-[0.2em]"
+                className="bg-zinc-100 text-black hover:bg-white disabled:bg-[#0a0a0a] disabled:text-zinc-700 px-6 py-4 md:px-12 md:py-6 rounded-2xl text-xs font-semibold transition-all duration-700 disabled:border disabled:border-white/[0.02] shadow-[0_0_20px_rgba(255,255,255,0.05)] uppercase tracking-[0.2em] w-full md:w-auto"
               >
-                {loading ? <Loader2 className="animate-spin" size={16} /> : "Execute"}
+                {loading ? <Loader2 className="animate-spin mx-auto" size={16} /> : "Execute"}
               </button>
             </div>
           </div>
@@ -207,21 +208,21 @@ export default function Home() {
           {/* RESULT AREA */}
           <AnimatePresence mode="wait">
             {loading && !report && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.7 }} className="py-32 text-center">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.7 }} className="py-20 md:py-32 text-center">
                 <div className="inline-block relative mb-8">
-                   <div className="w-12 h-12 border border-white/[0.05] border-t-red-900/50 rounded-full animate-spin duration-1000" />
+                   <div className="w-10 h-10 md:w-12 md:h-12 border border-white/[0.05] border-t-red-900/50 rounded-full animate-spin duration-1000" />
                 </div>
-                <p className="text-sm font-light tracking-[0.2em] text-zinc-500 uppercase">Synthesizing Intelligence...</p>
+                <p className="text-xs md:text-sm font-light tracking-[0.2em] text-zinc-500 uppercase">Synthesizing Intelligence...</p>
               </motion.div>
             )}
 
             {report && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="bg-white/[0.01] border border-white/[0.03] backdrop-blur-3xl rounded-[2rem] p-12 md:p-20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                <div className="flex items-center gap-4 mb-16 pb-8 border-b border-white/[0.02]">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="bg-white/[0.01] border border-white/[0.03] backdrop-blur-3xl rounded-[2rem] p-6 md:p-12 lg:p-20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                <div className="flex items-center gap-4 mb-8 md:mb-16 pb-6 md:pb-8 border-b border-white/[0.02]">
                   <BookOpen className="text-red-900/60" size={20} strokeWidth={1.5} />
                   <h2 className="text-[10px] font-medium uppercase tracking-[0.3em] text-zinc-500">Analysis Summary</h2>
                 </div>
-                <article className="prose prose-invert prose-p:font-light prose-p:leading-loose prose-a:text-red-800 prose-a:font-normal prose-headings:font-light max-w-none text-zinc-300">
+                <article className="prose prose-invert prose-p:font-light prose-p:leading-loose prose-a:text-red-800 prose-a:font-normal prose-headings:font-light max-w-none text-zinc-300 break-words">
                   <ReactMarkdown>{report}</ReactMarkdown>
                 </article>
               </motion.div>
