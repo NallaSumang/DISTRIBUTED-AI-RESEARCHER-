@@ -1,27 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff3b3b" />
-      <stop offset="100%" stop-color="#8b0000" />
+    <linearGradient id="gradRed" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#450a0a" />
+      <stop offset="50%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#fca5a5" />
     </linearGradient>
-    <filter id="glowRed">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
+  <rect width="100" height="100" rx="25" fill="#000000" />
   
-  <rect width="100" height="100" rx="24" fill="#020202" />
+  <!-- Swarm Shards (Dragon Scales) -->
+  <polygon points="70,20 85,35 65,55 50,40" fill="url(#gradRed)" filter="url(#glow)"/>
+  <polygon points="55,15 70,30 40,60 25,45" fill="url(#gradRed)" filter="url(#glow)"/>
+  <polygon points="40,10 55,25 20,60 5,45" fill="url(#gradRed)" filter="url(#glow)" opacity="0.5"/>
   
-  <!-- Agentic Hexagon Background (AI Core) -->
-  <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" fill="none" stroke="#3a0a0a" stroke-width="2" />
-  <polygon points="50,18 76,33 76,67 50,82 24,67 24,33" fill="none" stroke="#5a0f0f" stroke-width="1" />
+  <polygon points="30,80 15,65 35,45 50,60" fill="url(#gradRed)" filter="url(#glow)"/>
+  <polygon points="45,85 30,70 60,40 75,55" fill="url(#gradRed)" filter="url(#glow)"/>
+  <polygon points="60,90 45,75 80,40 95,55" fill="url(#gradRed)" filter="url(#glow)" opacity="0.5"/>
   
-  <!-- Top Dragon 'S' Slash -->
-  <path d="M 70 25 L 35 25 L 25 42 L 55 42 L 45 57 L 85 57 L 90 40 L 65 40 Z" fill="url(#gradRed)" filter="url(#glowRed)"/>
-  
-  <!-- Bottom Dragon 'S' Slash -->
-  <path d="M 30 75 L 65 75 L 75 58 L 45 58 L 55 43 L 15 43 L 10 60 L 35 60 Z" fill="url(#gradRed)" filter="url(#glowRed)"/>
-
-  <!-- Glowing Dragon Eye Core -->
-  <polygon points="50,45 56,50 50,55 44,50" fill="#ffffff" filter="url(#glowRed)"/>
+  <!-- Central Diamond (The Hive Core) -->
+  <polygon points="50,35 65,50 50,65 35,50" fill="#ffffff" filter="url(#glow)"/>
 </svg>
