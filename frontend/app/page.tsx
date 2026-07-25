@@ -105,11 +105,6 @@ export default function Home() {
         {/* Deep gradient base */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a0000_0%,#000000_100%)]" />
 
-        {/* Dragon Graphic */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-20 mix-blend-screen pointer-events-none [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_30%,transparent_100%)]">
-           <img src="/dragon.png" alt="Cyber Dragon" className="w-[90vw] md:w-[60vw] object-contain drop-shadow-[0_0_80px_rgba(255,0,0,1)]" />
-        </div>
-
         {/* 3D Moving Grid */}
         <div className="absolute inset-0 [perspective:1000px] pointer-events-none">
           <div className="absolute inset-0 origin-bottom [transform:rotateX(60deg)_translateZ(-200px)] opacity-90">

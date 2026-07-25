@@ -1,74 +1,47 @@
-<div align="center">
-  <img src="https://img.shields.io/badge/DISTRIBUTED-AI-EF4444?style=for-the-badge&logo=openai&logoColor=white" alt="DISTRIBUTED AI" />
-  <h1>DISTRIBUTED AI RESEARCHER</h1>
-  <p><strong>Sumang's Signature Edition</strong></p>
-</div>
+# 🧠 DISTRIBUTED AI RESEARCHER
+### Sumang's Signature Edition
 
-<br />
+Welcome to **Distributed AI Researcher** — an elite, multi-threaded "Swarm Intelligence" architecture designed to autonomously research, synthesize, and immortalize complex topics.
 
-## 🌟 Overview
-The **Distributed AI Researcher** is an advanced Swarm Intelligence application. It goes beyond the capabilities of a single language model by utilizing a multi-agent orchestrated backend. When given a complex research topic, an "Architect" agent breaks the topic down into highly focused sub-queries, and spawns multiple "Worker" agents to scour the internet simultaneously. Their findings are then synthesized into one ultimate, comprehensive master report.
+---
 
-## ✨ Features
-- 🐝 **Swarm Intelligence:** Uses advanced asynchronous multi-threading to deploy multiple LLaMA 3.3 agents concurrently.
-- 🌐 **Real-time Web Browsing:** Integrates with the Tavily API to fetch live, up-to-the-second information from the internet.
-- 🐉 **Dragonic Cyber-Grid UI:** A completely custom, 3D animated user interface with drifting embers and a raw, high-tech aesthetic.
-- 🧠 **Neural Memory:** Automatically syncs your past research to a Supabase PostgreSQL database, accessible anywhere.
+## ⚡ Core Architecture
+This project is built using a fundamentally decoupled architecture to achieve extreme speed and responsiveness:
+- **Frontend:** Next.js 15 + TailwindCSS. Features a stunning, pure 3D animated Cyber-Grid that renders completely on the GPU via CSS Keyframes.
+- **Backend Orchestrator:** FastAPI (Python) running on Port 7860.
+- **Message Broker:** Upstash Redis. Instantly catches and queues incoming HTTP requests to prevent 504 Timeouts during 60-second AI generation times.
+- **Background Worker:** A Python Daemon thread (`worker.py`) that endlessly processes the Redis queue.
+- **The Swarm:** Uses `ThreadPoolExecutor` to deploy 5 concurrent AI web-browsing agents simultaneously.
+- **Permanent Memory:** Supabase (PostgreSQL) is used to permanently store structured research reports in the cloud.
 
-## 🏗️ Architecture
+---
 
-### 1. The Backend (Python Swarm Engine)
-The core logic resides in `backend/ai_swarm.py` and `worker.py`.
-- **Architect (LLaMA 3.3):** Analyzes the prompt and generates 3-5 distinct sub-topics.
-- **Workers (Tavily + LLaMA 3.3):** Each sub-topic is handed to a thread pool worker. The worker browses the internet, reads the top results, and writes a detailed sub-report.
-- **Synthesizer:** The Architect merges all sub-reports into a massive Markdown research paper.
+## 📚 Masterpiece Documentation
+I have written an incredibly deep, file-by-file breakdown of exactly how this architecture works, why Node.js was rejected for the backend, and how the Swarm operates. 
 
-### 2. The Frontend (Next.js 15 / Tailwind)
-- A highly polished, "HUD" style interface.
-- 3D CSS perspective transforms create an infinite scrolling cyber-grid.
-- Mobile-responsive Neural Memory sidebar.
+You can find this complete technical guide locally in your repository at:
+**`docs/DISTRIBUTED_AI_Masterpiece_Guide.md`**
 
-## 🚀 Getting Started
+*(Note: The Masterpiece Guide is configured in `.gitignore` and kept strictly local to your machine for your personal understanding.)*
 
-### Prerequisites
-- Node.js & npm
-- Python 3.10+
+---
 
-### Setup
-1. **Clone the repository.**
-2. **Install Frontend Dependencies:**
-   ```bash
-   cd frontend
-   npm install
-   ```
-3. **Install Backend Dependencies:**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-4. **Environment Variables:**
-   Create a `.env` file in the `backend/` directory:
-   ```env
-   TOGETHER_API_KEY=your_llama_key_here
-   TAVILY_API_KEY=your_tavily_key_here
-   ```
-   Create a `.env.local` file in the `frontend/` directory:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+## 🚀 How to Run
 
-### Run the Swarm
-Start the Next.js frontend:
-```bash
-cd frontend
-npm run dev
-```
-Start the Python backend:
+**1. Boot the Backend (Python)**
 ```bash
 cd backend
+pip install -r requirements.txt
 python main.py
+# (In a separate terminal): python worker.py
+```
+
+**2. Boot the Frontend (Next.js)**
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
-*Architected and Engineered for Sumang.*
+*Skillfully Designed and Architected by Sumang.*
