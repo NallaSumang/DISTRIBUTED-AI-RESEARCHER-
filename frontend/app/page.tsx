@@ -18,7 +18,7 @@ export default function Home() {
   const [report, setReport] = useState("");
   const [history, setHistory] = useState<any[]>([]);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000"; 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:7860"; 
 
   // Function to pull "Memory" from Supabase
   const fetchHistory = useCallback(async () => {
@@ -34,34 +34,27 @@ export default function Home() {
   useEffect(() => {
     fetchHistory(); // Load memory on startup
     let interval: NodeJS.Timeout;
-    let pollCount = 0;
-    const MAX_POLLS = 150; // 5 minutes at 2s intervals
-
     if (jobId && loading) {
       interval = setInterval(async () => {
         try {
-          pollCount++;
-          if (pollCount > MAX_POLLS) {
-            setReport("### Timeout Error\n\nThe research agent took too long to respond. The HuggingFace Space might be waking up or overloaded.");
-            setLoading(false);
-            setJobId(null);
-            clearInterval(interval);
-            return;
-          }
-
           const res = await fetch(`${API_BASE}/api/research/${jobId}`);
+          if (!res.ok) throw new Error("Polling failed");
           const data = await res.json();
-          
-          if (data.status === "completed" || data.status === "failed") {
+          if (data.status === "completed") {
             setReport(data.data);
             setLoading(false);
             setJobId(null);
-            if (data.status === "completed") {
-                fetchHistory(); // Refresh sidebar when new research is done
-            }
+            fetchHistory(); // Refresh sidebar when new research is done
+            clearInterval(interval);
+          } else if (data.status === "failed") {
+            setReport(data.data || "### Error\nResearch failed.");
+            setLoading(false);
+            setJobId(null);
             clearInterval(interval);
           }
-        } catch (err) { console.error("Polling failed:", err); }
+        } catch (err) { 
+          console.error("Polling failed:", err); 
+        }
       }, 2000);
     }
     return () => clearInterval(interval);
@@ -72,11 +65,17 @@ export default function Home() {
     setLoading(true);
     setReport("");
     try {
-      const res = await fetch(`${API_BASE}/api/research?query=${encodeURIComponent(query)}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/research`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: query })
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
+      if (!data.job_id) throw new Error("No job ID returned");
       setJobId(data.job_id);
     } catch (err) {
-      alert("Backend Offline! Ensure main.py is running.");
+      alert("Backend Offline! Ensure main.py is running on port 7860.");
       setLoading(false);
     }
   };
