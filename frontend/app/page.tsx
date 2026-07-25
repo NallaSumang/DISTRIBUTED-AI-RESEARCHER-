@@ -83,15 +83,46 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
       
-      {/* LUXURY BACKGROUND EFFECTS */}
-      <div className="fixed inset-0 z-0 bg-[#030000] pointer-events-none overflow-hidden">
-        {/* Deep Red Aurora Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#7f1d1d] rounded-full blur-[120px] opacity-30 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#991b1b] rounded-full blur-[150px] opacity-20 animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
-        <div className="absolute top-[30%] left-[20%] w-[40%] h-[40%] bg-[#450a0a] rounded-full blur-[100px] opacity-40 animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
-        
-        {/* Cinematic Noise Overlay (Creates the frosted luxury texture) */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+      {/* 3D DRAGONIC CYBER-GRID & EMBERS (ANIME VIBE) */}
+      <div className="fixed inset-0 z-0 bg-[#030000] overflow-hidden pointer-events-none">
+        <style>{`
+          @keyframes grid-pan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+          }
+          @keyframes scan-line {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 110%; opacity: 0; }
+          }
+          @keyframes float-ember {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+          }
+        `}</style>
+
+        {/* Deep gradient base */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a0000_0%,#000000_100%)]" />
+
+        {/* 3D Moving Grid */}
+        <div className="absolute inset-0 [perspective:1000px]">
+          <div className="absolute inset-0 origin-bottom [transform:rotateX(60deg)_translateZ(-200px)] opacity-50">
+            <div className="absolute inset-[-100%] animate-[grid-pan_4s_linear_infinite] bg-[linear-gradient(to_right,#ff000040_1px,transparent_1px),linear-gradient(to_bottom,#ff000040_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+          </div>
+        </div>
+
+        {/* Anime HUD Scanline */}
+        <div className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent animate-[scan-line_6s_ease-in-out_infinite] shadow-[0_0_20px_rgba(255,0,0,0.8)]" />
+
+        {/* Floating Embers (Dragon Vibe) */}
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_20px_5px_rgba(255,0,0,0.9)] animate-[float-ember_4s_ease-in-out_infinite]" />
+        <div className="absolute top-3/4 left-2/3 w-3 h-3 bg-orange-500 rounded-full shadow-[0_0_25px_6px_rgba(255,100,0,0.9)] animate-[float-ember_6s_ease-in-out_infinite_1s]" />
+        <div className="absolute top-1/2 left-[15%] w-1.5 h-1.5 bg-yellow-400 rounded-full shadow-[0_0_15px_4px_rgba(255,200,0,0.9)] animate-[float-ember_5s_ease-in-out_infinite_2s]" />
+        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-red-600 rounded-full shadow-[0_0_20px_5px_rgba(255,0,0,0.9)] animate-[float-ember_7s_ease-in-out_infinite_0.5s]" />
+
+        {/* Vignette */}
+        <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,1)]" />
       </div>
 
       {/* LEFT SIDEBAR: THE MEMORY */}
