@@ -168,8 +168,10 @@ export default function Home() {
                 <Brain className="text-red-700/80" size={28} strokeWidth={1.5} />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-light tracking-[0.1em] text-zinc-100 mb-1">DISTRIBUTED <span className="text-red-900/60">AI</span></h1>
-                <div className="text-[9px] font-medium text-red-900/80 tracking-[0.4em] uppercase mt-1">Sumang Signature Edition</div>
+                <h1 className="text-2xl md:text-3xl font-light tracking-[0.1em] text-zinc-100 mb-1">
+                  DISTRIBUTED <span className="font-bold text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]">AI</span>
+                </h1>
+                <div className="text-[9px] font-medium text-red-500/90 tracking-[0.4em] uppercase mt-1">Sumang's Signature Edition</div>
               </div>
             </div>
             <div className="flex gap-4">
