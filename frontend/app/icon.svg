@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b3b" />
+      <stop offset="100%" stop-color="#8b0000" />
+    </linearGradient>
+    <filter id="glowRed">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <rect width="100" height="100" rx="24" fill="#020202" />
+  
+  <!-- Agentic Hexagon Background (AI Core) -->
+  <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" fill="none" stroke="#3a0a0a" stroke-width="2" />
+  <polygon points="50,18 76,33 76,67 50,82 24,67 24,33" fill="none" stroke="#5a0f0f" stroke-width="1" />
+  
+  <!-- Top Dragon 'S' Slash -->
+  <path d="M 70 25 L 35 25 L 25 42 L 55 42 L 45 57 L 85 57 L 90 40 L 65 40 Z" fill="url(#gradRed)" filter="url(#glowRed)"/>
+  
+  <!-- Bottom Dragon 'S' Slash -->
+  <path d="M 30 75 L 65 75 L 75 58 L 45 58 L 55 43 L 15 43 L 10 60 L 35 60 Z" fill="url(#gradRed)" filter="url(#glowRed)"/>
+
+  <!-- Glowing Dragon Eye Core -->
+  <polygon points="50,45 56,50 50,55 44,50" fill="#ffffff" filter="url(#glowRed)"/>
+</svg>
