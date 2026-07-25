@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Search, Loader2, BookOpen, Cpu, Sparkles, History, Globe, Zap } from "lucide-react";
+import { Search, Loader2, BookOpen, Cpu, Sparkles, History, Globe, Zap, Brain } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
