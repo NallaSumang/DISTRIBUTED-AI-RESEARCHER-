@@ -81,7 +81,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
+    <div className="flex flex-col xl:flex-row min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
       
       {/* 3D DRAGONIC CYBER-GRID & EMBERS (ANIME VIBE) */}
       <div className="fixed inset-0 z-0 bg-[#030000] overflow-hidden pointer-events-none">
@@ -125,9 +125,9 @@ export default function Home() {
         <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,1)]" />
       </div>
 
-      {/* LEFT SIDEBAR: THE MEMORY */}
-      <aside className="hidden xl:flex w-80 border-r border-white/[0.02] bg-white/[0.01] backdrop-blur-3xl flex-col z-20">
-        <div className="p-10 border-b border-white/[0.02]">
+      {/* SIDEBAR: THE MEMORY */}
+      <aside className="flex w-full xl:w-80 border-t xl:border-t-0 xl:border-r border-white/[0.02] bg-black/40 xl:bg-white/[0.01] backdrop-blur-3xl flex-col z-20 order-last xl:order-first h-[400px] xl:h-auto">
+        <div className="p-6 md:p-10 border-b border-white/[0.02]">
           <div className="flex items-center gap-4 text-red-900/80 mb-2">
             <History size={16} />
             <span className="text-[9px] font-medium uppercase tracking-[0.3em]">Neural Memory</span>
@@ -135,13 +135,16 @@ export default function Home() {
           <h2 className="text-sm font-light tracking-widest text-zinc-100">Recent Research</h2>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 custom-scrollbar">
           {history.map((item) => (
             <motion.button 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               key={item.id}
-              onClick={() => setReport(item.report)}
+              onClick={() => {
+                setReport(item.report);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="w-full text-left p-5 rounded-2xl bg-white/[0.01] border border-white/[0.02] hover:bg-white/[0.03] hover:border-red-900/20 transition-all duration-700 group"
             >
               <p className="text-xs font-light leading-relaxed line-clamp-2 text-zinc-500 group-hover:text-zinc-200 transition-colors duration-500">
@@ -156,8 +159,8 @@ export default function Home() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 relative z-10 overflow-y-auto">
-        <div className="max-w-5xl mx-auto p-4 md:p-16 pt-8 md:pt-16">
+      <div className="flex-1 relative z-10 overflow-y-auto custom-scrollbar">
+        <div className="max-w-5xl mx-auto p-4 md:p-16 pt-8 md:pt-16 min-h-screen">
           
           <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 md:mb-32 gap-6 md:gap-0">
             <div className="flex items-center gap-5">
@@ -165,8 +168,8 @@ export default function Home() {
                 <Brain className="text-red-700/80" size={28} strokeWidth={1.5} />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-light tracking-[0.1em] text-zinc-100 mb-1">D<span className="text-red-900/60">/</span>AI</h1>
-                <div className="text-[9px] font-medium text-red-900/80 tracking-[0.4em] uppercase mt-1">Distributed Researcher</div>
+                <h1 className="text-2xl md:text-3xl font-light tracking-[0.1em] text-zinc-100 mb-1">DISTRIBUTED <span className="text-red-900/60">AI</span></h1>
+                <div className="text-[9px] font-medium text-red-900/80 tracking-[0.4em] uppercase mt-1">Sumang Signature Edition</div>
               </div>
             </div>
             <div className="flex gap-4">
