@@ -84,14 +84,15 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
       
-      {/* BACKGROUND EFFECTS */}
-      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none overflow-hidden">
-        {/* Animated Cyber Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#7f1d1d20_1px,transparent_1px),linear-gradient(to_bottom,#7f1d1d20_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_60%,transparent_100%)]" />
+      {/* LUXURY BACKGROUND EFFECTS */}
+      <div className="fixed inset-0 z-0 bg-[#030000] pointer-events-none overflow-hidden">
+        {/* Deep Red Aurora Orbs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#7f1d1d] rounded-full blur-[120px] opacity-30 animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#991b1b] rounded-full blur-[150px] opacity-20 animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+        <div className="absolute top-[30%] left-[20%] w-[40%] h-[40%] bg-[#450a0a] rounded-full blur-[100px] opacity-40 animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
         
-        {/* Glowing Orbs */}
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-950/30 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '5s' }} />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-900/10 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
+        {/* Cinematic Noise Overlay (Creates the frosted luxury texture) */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
       </div>
 
       {/* LEFT SIDEBAR: THE MEMORY */}
