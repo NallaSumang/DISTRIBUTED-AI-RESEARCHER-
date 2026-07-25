@@ -1,7 +1,6 @@
 <div align="center">
   <h1>🧠 Distributed AI Researcher</h1>
   <p>A multi-threaded Swarm Intelligence architecture designed to autonomously browse the web, synthesize data, and store structured research reports.</p>
-  <p><i>Built from the ground up by Sumang</i></p>
 </div>
 
 ---
