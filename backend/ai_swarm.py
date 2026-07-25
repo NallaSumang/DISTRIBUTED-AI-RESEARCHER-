@@ -28,17 +28,23 @@ def planner_agent(state: AgentState):
     res = llm.invoke([HumanMessage(content=prompt)])
     try:
         queries = json.loads(res.content.replace("```json", "").replace("```", "").strip())
-    except:
+    except Exception:
         queries = [state['query']]
     return {"sub_queries": queries}
 
 def search_agent(state: AgentState):
-    print(f"   -> Searching...")
+    print(f"   -> Searching {len(state['sub_queries'])} sub-queries...")
     results = []
-    with DDGS() as ddgs:
-        for q in state['sub_queries']:
-            for r in ddgs.text(q, max_results=2):
-                results.append(f"Source: {r['href']}\n{r['body']}")
+    for q in state['sub_queries']:
+        try:
+            with DDGS() as ddgs:
+                for r in ddgs.text(q, max_results=2):
+                    results.append(f"Source: {r['href']}\n{r['body']}")
+        except Exception as e:
+            print(f"   ⚠️ Search failed for '{q}': {e}")
+            results.append(f"Search failed for: {q}")
+    if not results:
+        results.append("No search results found. Generate report from existing knowledge.")
     return {"raw_data": results}
 
 def writer_agent(state: AgentState):

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Loader2, BookOpen, Cpu, Sparkles, History, Globe, Zap } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,10 +18,10 @@ export default function Home() {
   const [report, setReport] = useState("");
   const [history, setHistory] = useState<any[]>([]);
 
-  const API_BASE = "http://127.0.0.1:8000"; 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000"; 
 
   // Function to pull "Memory" from Supabase
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     const { data, error } = await supabase
       .from("research_history")
       .select("*")
@@ -29,28 +29,43 @@ export default function Home() {
       .limit(8);
     if (data) setHistory(data);
     if (error) console.error("Memory Fetch Error:", error);
-  };
+  }, []);
 
   useEffect(() => {
     fetchHistory(); // Load memory on startup
     let interval: NodeJS.Timeout;
+    let pollCount = 0;
+    const MAX_POLLS = 150; // 5 minutes at 2s intervals
+
     if (jobId && loading) {
       interval = setInterval(async () => {
         try {
+          pollCount++;
+          if (pollCount > MAX_POLLS) {
+            setReport("### Timeout Error\n\nThe research agent took too long to respond. The HuggingFace Space might be waking up or overloaded.");
+            setLoading(false);
+            setJobId(null);
+            clearInterval(interval);
+            return;
+          }
+
           const res = await fetch(`${API_BASE}/api/research/${jobId}`);
           const data = await res.json();
-          if (data.status === "completed") {
+          
+          if (data.status === "completed" || data.status === "failed") {
             setReport(data.data);
             setLoading(false);
             setJobId(null);
-            fetchHistory(); // Refresh sidebar when new research is done
+            if (data.status === "completed") {
+                fetchHistory(); // Refresh sidebar when new research is done
+            }
             clearInterval(interval);
           }
         } catch (err) { console.error("Polling failed:", err); }
       }, 2000);
     }
     return () => clearInterval(interval);
-  }, [jobId, loading]);
+  }, [jobId, loading, fetchHistory]);
 
   const handleSearch = async () => {
     if (!query || loading) return;
@@ -140,6 +155,7 @@ export default function Home() {
                 className="w-full bg-transparent border-none py-5 text-xl font-medium focus:outline-none placeholder:text-zinc-700"
                 placeholder="Analyze a topic in depth..."
                 value={query}
+                maxLength={2000}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
