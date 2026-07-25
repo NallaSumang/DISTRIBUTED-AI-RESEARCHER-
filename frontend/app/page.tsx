@@ -81,7 +81,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row min-h-screen bg-[#050505] text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
+    <div className="flex flex-col xl:flex-row min-h-screen bg-transparent text-zinc-300 selection:bg-red-900/30 font-sans tracking-wide">
       
       {/* 3D DRAGONIC CYBER-GRID & EMBERS (ANIME VIBE) */}
       <div className="fixed inset-0 z-0 bg-[#030000] overflow-hidden pointer-events-none">
@@ -107,8 +107,8 @@ export default function Home() {
 
         {/* 3D Moving Grid */}
         <div className="absolute inset-0 [perspective:1000px]">
-          <div className="absolute inset-0 origin-bottom [transform:rotateX(60deg)_translateZ(-200px)] opacity-50">
-            <div className="absolute inset-[-100%] animate-[grid-pan_4s_linear_infinite] bg-[linear-gradient(to_right,#ff000040_1px,transparent_1px),linear-gradient(to_bottom,#ff000040_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+          <div className="absolute inset-0 origin-bottom [transform:rotateX(60deg)_translateZ(-200px)] opacity-90">
+            <div className="absolute inset-[-200%] animate-[grid-pan_4s_linear_infinite] bg-[linear-gradient(to_right,#ff000080_1px,transparent_1px),linear-gradient(to_bottom,#ff000080_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_80%,transparent_100%)]" />
           </div>
         </div>
 
