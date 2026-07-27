@@ -20,24 +20,44 @@ The application is decoupled into a frontend presentation layer and a persistent
 
 ```mermaid
 graph TD
-    A[Next.js Client] -->|HTTP POST| B[FastAPI Orchestrator]
-    B -->|Push Job| C[(Upstash Redis Queue)]
-    C -->|BRPOP| D[Python Worker Daemon]
-    
-    subgraph Swarm Intelligence
-        D --> E[Architect Agent: Topic Breakdown]
-        E --> F[Async Scout 1]
-        E --> G[Async Scout 2]
-        E --> H[Async Scout 3]
-        F --> I[Synthesizer Agent]
-        G --> I
-        H --> I
+    %% Custom Styles
+    classDef primary fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff,rx:6px
+    classDef queue fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#fff,rx:6px
+    classDef db fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff,rx:6px
+    classDef ai fill:#7c3aed,stroke:#6d28d9,stroke-width:2px,color:#fff,rx:6px
+    classDef worker fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#fff,rx:6px
+
+    %% Nodes
+    Client["💻 Next.js Client"]:::primary
+    API["⚡ FastAPI Orchestrator"]:::primary
+    Redis[("🟥 Upstash Redis<br>(Queue & Cache)")]:::queue
+    Supabase[("🟩 Supabase<br>(PostgreSQL)")]:::db
+
+    %% Logical Grouping
+    subgraph Backend ["⚙️ Background Processing"]
+        Worker["Python Worker Daemon"]:::worker
+        
+        subgraph Swarm ["🧠 LangGraph AI Swarm"]
+            Architect["🎯 Architect Agent<br>(Topic Breakdown)"]:::ai
+            Scouts["🔍 Async Scouts<br>(Parallel DDGS)"]:::ai
+            Synthesizer["✍️ Synthesizer Agent<br>(Markdown Generation)"]:::ai
+            
+            Architect ==>|Extract Sub-queries| Scouts
+            Scouts ==>|Scraped Context| Synthesizer
+        end
+        Worker -->|Initiate Workflow| Architect
     end
+
+    %% Data Flow
+    Client -->|1. Submit Query| API
+    API -->|2. Push Job| Redis
+    Redis -->|3. BRPOP (Listen)| Worker
     
-    I -->|Archive Report| J[(Supabase PostgreSQL)]
-    I -->|Cache Result| C
-    A -->|Poll Result| B
-    B -->|Fetch| C
+    Synthesizer -->|4a. Archive Report| Supabase
+    Synthesizer -.->|4b. Cache Result| Redis
+    
+    Client -.->|5. Poll Status| API
+    API -.->|6. Fetch Result| Redis
 ```
 
 ## 🛠️ Technology Stack
