@@ -32,17 +32,30 @@ def planner_agent(state: AgentState):
         queries = [state['query']]
     return {"sub_queries": queries}
 
+import asyncio
+from duckduckgo_search import AsyncDDGS
+
+async def get_single_query(query):
+    try:
+        async with AsyncDDGS() as ddgs:
+            return [f"Source: {r['href']}\n{r['body']}" async for r in ddgs.text(query, max_results=2)]
+    except Exception as e:
+        print(f"   ⚠️ Search failed for '{query}': {e}")
+        return [f"Search failed for: {query}"]
+
 def search_agent(state: AgentState):
-    print(f"   -> Searching {len(state['sub_queries'])} sub-queries...")
-    results = []
-    for q in state['sub_queries']:
-        try:
-            with DDGS() as ddgs:
-                for r in ddgs.text(q, max_results=2):
-                    results.append(f"Source: {r['href']}\n{r['body']}")
-        except Exception as e:
-            print(f"   ⚠️ Search failed for '{q}': {e}")
-            results.append(f"Search failed for: {q}")
+    print(f"   -> Searching {len(state['sub_queries'])} sub-queries in parallel...")
+    
+    async def execute_parallel_research(sub_queries):
+        tasks = [get_single_query(q) for q in sub_queries]
+        return await asyncio.gather(*tasks)
+    
+    # Run the async code in a synchronous wrapper
+    parallel_results = asyncio.run(execute_parallel_research(state['sub_queries']))
+    
+    # Flatten the results
+    results = [item for sublist in parallel_results for item in sublist]
+    
     if not results:
         results.append("No search results found. Generate report from existing knowledge.")
     return {"raw_data": results}
