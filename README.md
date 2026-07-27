@@ -42,8 +42,8 @@ graph TD
             Scouts["🔍 Async Scouts<br>(Parallel DDGS)"]:::ai
             Synthesizer["✍️ Synthesizer Agent<br>(Markdown Generation)"]:::ai
             
-            Architect ==>|Extract Sub-queries| Scouts
-            Scouts ==>|Scraped Context| Synthesizer
+            Architect -->|Extract Sub-queries| Scouts
+            Scouts -->|Scraped Context| Synthesizer
         end
         Worker -->|Initiate Workflow| Architect
     end
@@ -51,7 +51,7 @@ graph TD
     %% Data Flow
     Client -->|1. Submit Query| API
     API -->|2. Push Job| Redis
-    Redis -->|3. BRPOP (Listen)| Worker
+    Redis -->|3. BRPOP Listen| Worker
     
     Synthesizer -->|4a. Archive Report| Supabase
     Synthesizer -.->|4b. Cache Result| Redis
