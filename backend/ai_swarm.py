@@ -22,13 +22,20 @@ llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
+from pydantic import BaseModel, Field
+
+class SearchQueries(BaseModel):
+    queries: List[str] = Field(description="List of 3 search queries")
+
 def planner_agent(state: AgentState):
     print("   -> Planning...")
     prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a JSON list of strings."
-    res = llm.invoke([HumanMessage(content=prompt)])
+    structured_llm = llm.with_structured_output(SearchQueries)
     try:
-        queries = json.loads(res.content.replace("```json", "").replace("```", "").strip())
-    except Exception:
+        res = structured_llm.invoke([HumanMessage(content=prompt)])
+        queries = res.queries
+    except Exception as e:
+        print(f"   ⚠️ Planning parsing failed: {e}")
         queries = [state['query']]
     return {"sub_queries": queries}
 
