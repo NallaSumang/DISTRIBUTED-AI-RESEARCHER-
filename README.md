@@ -86,10 +86,21 @@ The core reasoning engine leverages **LangGraph** and an asynchronous I/O model:
 
 ---
 
-## 🚀 Deployment & Usage
+## 🌐 Production Deployment
+
+| Component | Platform | URL |
+| :--- | :--- | :--- |
+| **Frontend** | Vercel | [distributed-ai-researcher.vercel.app](https://distributed-ai-researcher.vercel.app) |
+| **Backend** | Hugging Face Spaces (Docker) | Dockerized FastAPI on port 7860 |
+
+The backend is deployed as a single Docker container on Hugging Face Spaces. The `Dockerfile` starts both the FastAPI orchestrator and the Redis queue worker as a background process in the same container (`python worker.py & python main.py`).
+
+---
+
+## 🚀 Local Development
 
 ### 1. Initialize the Backend
-Ensure you have your environment variables set (`.env` file).
+Ensure you have your environment variables set (`.env` file with `UPSTASH_REDIS_URI`, `GROQ_API_KEY`, `SUPABASE_KEY`, `SUPABASE_URL`).
 ```bash
 cd backend
 pip install -r requirements.txt
