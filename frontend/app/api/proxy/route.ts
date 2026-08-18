@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 
 const API_BASE = process.env.API_BASE || process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:7860";
-const API_KEY = process.env.API_MANUAL_SECRET_KEY;
 
 export async function POST(request: Request) {
   try {
+    const API_KEY = process.env.API_MANUAL_SECRET_KEY;
     const body = await request.json();
     
     if (!API_KEY) {
+      console.error("API_KEY is missing on Vercel");
       return NextResponse.json({ error: "API_MANUAL_SECRET_KEY is missing on server" }, { status: 500 });
     }
 
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const API_KEY = process.env.API_MANUAL_SECRET_KEY;
     const { searchParams } = new URL(request.url);
     const jobId = searchParams.get("jobId");
 
@@ -42,6 +44,7 @@ export async function GET(request: Request) {
     }
 
     if (!API_KEY) {
+      console.error("API_KEY is missing on Vercel");
       return NextResponse.json({ error: "API_MANUAL_SECRET_KEY is missing on server" }, { status: 500 });
     }
 
