@@ -85,4 +85,4 @@ workflow.add_edge("writer", END)
 research_app = workflow.compile()
 
 def execute_research(query: str):
-    return research_app.invoke({"query": query, "sub_queries": [], "raw_data": [], "final_report": ""})['final_report']
+    return research_app.invoke({"query": query, "sub_queries": [], "raw_data": [], "final_report": ""})['final_report']# trigger sync
