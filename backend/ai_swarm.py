@@ -27,14 +27,19 @@ from pydantic import BaseModel, Field
 class SearchQueries(BaseModel):
     queries: List[str] = Field(description="List of 3 search queries")
 
+import json
+
 def planner_agent(state: AgentState):
     print("   -> Planning...")
-    prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a JSON list of strings."
-    # Use json_mode since tool calling might not be supported by some models
-    structured_llm = llm.with_structured_output(SearchQueries, method="json_mode")
+    prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a raw JSON list of strings, with no other text, markdown, or schema."
     try:
-        res = structured_llm.invoke([HumanMessage(content=prompt)])
-        queries = res.queries
+        res = llm.invoke([HumanMessage(content=prompt)])
+        content = res.content.strip()
+        if content.startswith("```json"):
+            content = content[7:-3].strip()
+        queries = json.loads(content)
+        if not isinstance(queries, list):
+            queries = [state['query']]
     except Exception as e:
         print(f"   ⚠️ Planning parsing failed: {e}")
         queries = [state['query']]
@@ -45,10 +50,16 @@ from duckduckgo_search import AsyncDDGS
 
 async def get_single_query(query):
     try:
-        async with AsyncDDGS() as ddgs:
-            # text() returns a coroutine in newer duckduckgo-search versions
-            results = await ddgs.text(query, max_results=2)
-            return [f"Source: {r['href']}\n{r['body']}" for r in results]
+        tavily_key = os.getenv("TAVILY_API_KEY")
+        if tavily_key:
+            from tavily import AsyncTavilyClient
+            client = AsyncTavilyClient(api_key=tavily_key)
+            response = await client.search(query=query, max_results=2)
+            return [f"Source: {r['url']}\n{r['content']}" for r in response['results']]
+        else:
+            async with AsyncDDGS() as ddgs:
+                results = await ddgs.text(query, max_results=2)
+                return [f"Source: {r['href']}\n{r['body']}" for r in results]
     except Exception as e:
         print(f"   ⚠️ Search failed for '{query}': {e}")
         return [f"Search failed for: {query}"]
