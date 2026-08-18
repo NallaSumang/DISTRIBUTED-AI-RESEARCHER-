@@ -37,11 +37,7 @@ export default function Home() {
     if (jobId && loading) {
       interval = setInterval(async () => {
         try {
-          const res = await fetch(`${API_BASE}/api/research/${jobId}`, {
-            headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_API_MANUAL_SECRET_KEY || ""
-            }
-          });
+          const res = await fetch(`/api/proxy?jobId=${jobId}`);
           if (!res.ok) throw new Error("Polling failed");
           const data = await res.json();
           if (data.status === "completed") {
@@ -69,11 +65,10 @@ export default function Home() {
     setLoading(true);
     setReport("");
     try {
-      const res = await fetch(`${API_BASE}/api/research`, { 
+      const res = await fetch(`/api/proxy`, { 
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_API_MANUAL_SECRET_KEY || "" 
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ query: query })
       });
