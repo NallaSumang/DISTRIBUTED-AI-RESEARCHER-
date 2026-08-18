@@ -49,16 +49,23 @@ graph TD
     end
 
     %% Data Flow
-    Client -->|1. Submit Query| API
-    API -->|2. Push Job| Redis
-    Redis -->|3. BRPOP Listen| Worker
+    Client -->|1. Submit Query (BFF Proxy)| Proxy["🛡️ Next.js API Proxy"]:::primary
+    Proxy -->|2. Authenticated Request (x-api-key)| API
+    API -->|3. Push Job| Redis
+    Redis -->|4. BRPOP Listen| Worker
     
-    Synthesizer -->|4a. Archive Report| Supabase
-    Synthesizer -.->|4b. Cache Result| Redis
+    Synthesizer -->|5a. Archive Report| Supabase
+    Synthesizer -.->|5b. Cache Result| Redis
     
-    Client -.->|5. Poll Status| API
-    API -.->|6. Fetch Result| Redis
+    Client -.->|6. Poll Status (via Proxy)| API
+    API -.->|7. Fetch Result| Redis
 ```
+
+## 🔐 Security Architecture
+
+To ensure enterprise-grade security across the distributed environment:
+* **BFF (Backend-For-Frontend) Proxy:** The Next.js frontend routes all requests through a server-side API proxy (`/api/proxy`). This ensures that the secret API keys are never bundled into the client-side browser code (avoiding `NEXT_PUBLIC_` exposure).
+* **FastAPI Gateway:** The Python backend implements a strict `x-api-key` validation layer using FastAPI's `Security` dependencies. It immediately drops any unauthenticated requests with a `401 Unauthorized` before they can reach the job queue, protecting the system from unauthorized resource consumption.
 
 ## 🛠️ Technology Stack
 
