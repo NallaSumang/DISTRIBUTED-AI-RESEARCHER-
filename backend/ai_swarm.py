@@ -15,9 +15,9 @@ class AgentState(TypedDict):
     raw_data: List[str]
     final_report: str
 
-# Llama 3.3 70B is the industry standard for reasoning in 2026
+# Use groq/compound as it's the verified available model for this Groq account
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile", 
+    model="groq/compound", 
     temperature=0, 
     api_key=os.getenv("GROQ_API_KEY")
 )
