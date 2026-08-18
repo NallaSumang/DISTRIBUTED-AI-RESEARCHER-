@@ -15,9 +15,9 @@ class AgentState(TypedDict):
     raw_data: List[str]
     final_report: str
 
-# Use groq/compound as it's the verified available model for this Groq account
+# Use qwen for large context window (32k) and better reasoning, fallback to compound
 llm = ChatGroq(
-    model="groq/compound", 
+    model="qwen/qwen3.6-27b", 
     temperature=0, 
     api_key=os.getenv("GROQ_API_KEY")
 )
@@ -30,7 +30,8 @@ class SearchQueries(BaseModel):
 def planner_agent(state: AgentState):
     print("   -> Planning...")
     prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a JSON list of strings."
-    structured_llm = llm.with_structured_output(SearchQueries)
+    # Use json_mode since tool calling might not be supported by some models
+    structured_llm = llm.with_structured_output(SearchQueries, method="json_mode")
     try:
         res = structured_llm.invoke([HumanMessage(content=prompt)])
         queries = res.queries
@@ -45,7 +46,9 @@ from duckduckgo_search import AsyncDDGS
 async def get_single_query(query):
     try:
         async with AsyncDDGS() as ddgs:
-            return [f"Source: {r['href']}\n{r['body']}" async for r in ddgs.text(query, max_results=2)]
+            # text() returns a coroutine in newer duckduckgo-search versions
+            results = await ddgs.text(query, max_results=2)
+            return [f"Source: {r['href']}\n{r['body']}" for r in results]
     except Exception as e:
         print(f"   ⚠️ Search failed for '{query}': {e}")
         return [f"Search failed for: {query}"]
@@ -70,6 +73,9 @@ def search_agent(state: AgentState):
 def writer_agent(state: AgentState):
     print("   -> Writing...")
     context = "\n\n".join(state['raw_data'])
+    # Truncate context to ensure it fits in model window just in case
+    if len(context) > 20000:
+        context = context[:20000] + "... (truncated)"
     prompt = f"Write a professional Markdown report for: {state['query']}\n\nContext:\n{context}"
     res = llm.invoke([HumanMessage(content=prompt)])
     return {"final_report": res.content}
