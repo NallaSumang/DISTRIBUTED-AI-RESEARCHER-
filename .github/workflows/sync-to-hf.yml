@@ -1,0 +1,43 @@
+name: Sync Backend to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push backend directory to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "Error: HF_TOKEN secret is not set!"
+            exit 1
+          fi
+
+          # Configure Git
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          
+          # Clone the Hugging Face Space to a temporary directory
+          git clone https://user:$HF_TOKEN@huggingface.co/spaces/sumangempire/swarm-research-engine hf_space
+          
+          # Copy the contents of the backend folder into the cloned Space
+          cp -r backend/* hf_space/
+          
+          # Change directory to the Space
+          cd hf_space
+          
+          # Add, commit, and push
+          git add .
+          git commit -m "Auto-sync backend from GitHub to Hugging Face" || echo "No changes to commit"
+          git push origin main
