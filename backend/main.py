@@ -63,12 +63,27 @@ class ResearchRequest(BaseModel):
             raise ValueError("Query too long. Maximum 2000 characters.")
         return v
 
+from fastapi.security import APIKeyHeader
+from fastapi import Security, Depends
+
+API_KEY_NAME = "x-api-key"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
+
+def verify_api_key(api_key: str = Security(api_key_header)):
+    expected_api_key = os.getenv("API_SECRET_KEY")
+    if not expected_api_key:
+        # In production, if this isn't set, reject everything.
+        raise HTTPException(status_code=500, detail="API_SECRET_KEY not configured on server")
+    if api_key != expected_api_key:
+        raise HTTPException(status_code=401, detail="Invalid API Key")
+    return api_key
+
 @app.get("/")
 async def root():
     return {"status": "Online", "service": "Distributed AI Research Agent"}
 
 @app.post("/api/research")
-async def start_research(request: ResearchRequest):
+async def start_research(request: ResearchRequest, api_key: str = Depends(verify_api_key)):
     job_id = str(uuid.uuid4())
     job_data = {"job_id": job_id, "query": request.query}
 
@@ -78,7 +93,7 @@ async def start_research(request: ResearchRequest):
     return {"job_id": job_id, "status": "queued"}
 
 @app.get("/api/research/{job_id}")
-async def get_result(job_id: str):
+async def get_result(job_id: str, api_key: str = Depends(verify_api_key)):
     # Check if the worker saved a result for this ID
     result = redis_client.get(f"result:{job_id}")
 
