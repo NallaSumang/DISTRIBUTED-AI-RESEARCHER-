@@ -24,4 +24,5 @@ node_modules/
 *.cert
 secret*
 secrets.json
-*.secret
+*.secretdocs/
+backend/tests/
