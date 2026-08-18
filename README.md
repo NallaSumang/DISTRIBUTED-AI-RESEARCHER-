@@ -29,6 +29,7 @@ graph TD
 
     %% Nodes
     Client["💻 Next.js Client"]:::primary
+    Proxy["🛡️ Next.js API Proxy"]:::primary
     API["⚡ FastAPI Orchestrator"]:::primary
     Redis[("🟥 Upstash Redis<br>(Queue & Cache)")]:::queue
     Supabase[("🟩 Supabase<br>(PostgreSQL)")]:::db
@@ -49,16 +50,17 @@ graph TD
     end
 
     %% Data Flow
-    Client -->|1. Submit Query (BFF Proxy)| Proxy["🛡️ Next.js API Proxy"]:::primary
-    Proxy -->|2. Authenticated Request (x-api-key)| API
+    Client -->|1. Submit Query| Proxy
+    Proxy -->|2. Authenticated Request| API
     API -->|3. Push Job| Redis
     Redis -->|4. BRPOP Listen| Worker
     
     Synthesizer -->|5a. Archive Report| Supabase
     Synthesizer -.->|5b. Cache Result| Redis
     
-    Client -.->|6. Poll Status (via Proxy)| API
-    API -.->|7. Fetch Result| Redis
+    Client -.->|6. Poll Status| Proxy
+    Proxy -.->|7. Fetch Result| API
+    API -.->|8. Retrieve Data| Redis
 ```
 
 ## 🔐 Security Architecture
