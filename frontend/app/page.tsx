@@ -39,7 +39,7 @@ export default function Home() {
         try {
           const res = await fetch(`${API_BASE}/api/research/${jobId}`, {
             headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_API_SECRET_KEY || ""
+              "x-api-key": process.env.NEXT_PUBLIC_API_MANUAL_SECRET_KEY || ""
             }
           });
           if (!res.ok) throw new Error("Polling failed");
@@ -73,7 +73,7 @@ export default function Home() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_API_SECRET_KEY || "" 
+          "x-api-key": process.env.NEXT_PUBLIC_API_MANUAL_SECRET_KEY || "" 
         },
         body: JSON.stringify({ query: query })
       });
