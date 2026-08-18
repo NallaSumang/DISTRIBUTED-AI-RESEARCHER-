@@ -15,7 +15,7 @@ redis_client = redis.from_url(redis_uri)
 
 # 2. Initialize Supabase (Long-term Memory)
 url = os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_KEY")
+key = os.getenv("SUPABASE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 if not url or not key:
     raise RuntimeError("SUPABASE_URL or SUPABASE_KEY environment variable not set")
 supabase: Client = create_client(url, key)
