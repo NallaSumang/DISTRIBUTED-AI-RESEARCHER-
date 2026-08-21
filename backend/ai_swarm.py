@@ -1,4 +1,5 @@
 import os
+import re
 import json
 from typing import TypedDict, List
 from dotenv import load_dotenv
@@ -29,12 +30,16 @@ class SearchQueries(BaseModel):
 
 import json
 
+def strip_thinking(text: str) -> str:
+    """Remove <think>...</think> blocks emitted by reasoning models (e.g. Qwen3)."""
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
 def planner_agent(state: AgentState):
     print("   -> Planning...")
     prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a raw JSON list of strings, with no other text, markdown, or schema."
     try:
         res = llm.invoke([HumanMessage(content=prompt)])
-        content = res.content.strip()
+        content = strip_thinking(res.content)
         if content.startswith("```json"):
             content = content[7:-3].strip()
         queries = json.loads(content)
@@ -89,7 +94,7 @@ def writer_agent(state: AgentState):
         context = context[:20000] + "... (truncated)"
     prompt = f"Write a professional Markdown report for: {state['query']}\n\nContext:\n{context}"
     res = llm.invoke([HumanMessage(content=prompt)])
-    return {"final_report": res.content}
+    return {"final_report": strip_thinking(res.content)}
 
 workflow = StateGraph(AgentState)
 workflow.add_node("planner", planner_agent)
