@@ -16,10 +16,19 @@ class AgentState(TypedDict):
     raw_data: List[str]
     final_report: str
 
-# Use qwen for large context window (32k) and better reasoning, fallback to compound
-llm = ChatGroq(
-    model="qwen/qwen3.6-27b", 
-    temperature=0, 
+# Planner: lightweight — only needs a short JSON list output
+planner_llm = ChatGroq(
+    model="qwen/qwen3.6-27b",
+    temperature=0,
+    max_tokens=512,
+    api_key=os.getenv("GROQ_API_KEY")
+)
+
+# Writer: needs large output budget for full detailed reports
+writer_llm = ChatGroq(
+    model="qwen/qwen3.6-27b",
+    temperature=0,
+    max_tokens=8192,
     api_key=os.getenv("GROQ_API_KEY")
 )
 
@@ -38,7 +47,7 @@ def planner_agent(state: AgentState):
     print("   -> Planning...")
     prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a raw JSON list of strings, with no other text, markdown, or schema."
     try:
-        res = llm.invoke([HumanMessage(content=prompt)])
+        res = planner_llm.invoke([HumanMessage(content=prompt)])
         content = strip_thinking(res.content)
         if content.startswith("```json"):
             content = content[7:-3].strip()
@@ -59,11 +68,11 @@ async def get_single_query(query):
         if tavily_key:
             from tavily import AsyncTavilyClient
             client = AsyncTavilyClient(api_key=tavily_key)
-            response = await client.search(query=query, max_results=2)
+            response = await client.search(query=query, max_results=4)
             return [f"Source: {r['url']}\n{r['content']}" for r in response['results']]
         else:
             async with AsyncDDGS() as ddgs:
-                results = await ddgs.text(query, max_results=2)
+                results = await ddgs.text(query, max_results=4)
                 return [f"Source: {r['href']}\n{r['body']}" for r in results]
     except Exception as e:
         print(f"   ⚠️ Search failed for '{query}': {e}")
@@ -89,11 +98,16 @@ def search_agent(state: AgentState):
 def writer_agent(state: AgentState):
     print("   -> Writing...")
     context = "\n\n".join(state['raw_data'])
-    # Truncate context to ensure it fits in model window just in case
-    if len(context) > 20000:
-        context = context[:20000] + "... (truncated)"
-    prompt = f"Write a professional Markdown report for: {state['query']}\n\nContext:\n{context}"
-    res = llm.invoke([HumanMessage(content=prompt)])
+    # Truncate context to fit Qwen3's 32k context window
+    if len(context) > 32000:
+        context = context[:32000] + "... (truncated)"
+    prompt = (
+        f"Write a comprehensive, detailed, professional Markdown research report for: {state['query']}\n"
+        f"Include all sections: overview, detailed analysis, key facts, examples, criticisms, and conclusion.\n"
+        f"Do NOT stop early. Write the COMPLETE report.\n\n"
+        f"Context:\n{context}"
+    )
+    res = writer_llm.invoke([HumanMessage(content=prompt)])
     return {"final_report": strip_thinking(res.content)}
 
 workflow = StateGraph(AgentState)
