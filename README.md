@@ -74,11 +74,11 @@ This system replaces the single-threaded LLM call model with a genuine multi-age
 
 ## 🤖 The AI Swarm Pipeline
 
-We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through three specialized agents:
+We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through specialized agents, backed by an **indestructible Multi-Model Fallback Chain**. If the primary model (Qwen) hits a rate limit or goes down, the system silently cascades through Llama 3 8B, Mixtral 8x7B, Llama 3.3 70B, and Gemma 2.
 
-1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. (e.g., "quantum computing" becomes "quantum computing error correction 2024", "commercial applications", etc.)
-2. **The Scouts**: We fire off DuckDuckGo searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
-3. **The Synthesizer**: Armed with a 32k context window and a massive 8192 output token limit, this agent fuses all the scout data into a master Markdown report with citations.
+1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. A custom robust Regex engine parses the output so it never fails even if the AI hallucinates bad markdown.
+2. **The Scouts**: We fire off DuckDuckGo (sync wrapper) or Tavily searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
+3. **The Synthesizer**: Armed with a carefully truncated context window and a 4096 output token limit, this agent fuses all the scout data into a master Markdown report with citations — perfectly calibrated to run inside the Groq Free Tier.
 
 ---
 
@@ -129,6 +129,7 @@ The aesthetics are unapologetically premium — dubbed the *Sumang Signature Edi
 
 ### ⚠️ Known Behaviours & Quirks
 - **HuggingFace Cold-Start**: Free-tier Spaces sleep after inactivity. The first request may take 30–60 seconds. The UI displays an animated inline toast noting the cold-start. This is expected behaviour.
+- **Groq Free Tier 8000 TPM Limit**: The system is explicitly designed to stay under Groq's 8,000 Tokens Per Minute limit on the free tier. Context is automatically truncated to ~12k characters and output is capped at 4096 tokens to prevent 413 Rate Limit crashes.
 - **Reasoning Models**: If switched to a model like Qwen3, it emits `<think>` blocks. We dynamically strip these out before rendering to keep the report clean.
 - **Redis TTL**: Job results expire from the Redis cache after 1 hour, but remain permanently in the Supabase history.
 
