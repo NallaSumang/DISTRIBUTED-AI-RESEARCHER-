@@ -328,7 +328,7 @@ export default function Home() {
                     Analysis Summary
                   </h2>
                 </div>
-                <article className="prose prose-sm sm:prose prose-invert prose-p:font-light prose-p:leading-loose prose-a:text-red-800 prose-a:font-normal prose-headings:font-light max-w-none text-zinc-300 break-words overflow-x-auto">
+                <article className="report-body max-w-none">
                   <ReactMarkdown>{report}</ReactMarkdown>
                 </article>
               </motion.div>
