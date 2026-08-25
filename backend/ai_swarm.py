@@ -130,7 +130,7 @@ def writer_agent(state: AgentState):
         f"5. Visionary & Optimistic Conclusion (Forward-looking trajectory)\n\n"
         f"CRITICAL DIRECTIVES:\n"
         f"- Tone: Hyper-professional, relentlessly optimistic, highly analytical, and visionary.\n"
-        f"- Verbosity: This must be a MASSIVE, multi-page document. Expand on EVERY single point. Do not summarize briefly. Provide extreme nuance and technical/contextual depth.\n"
+        f"- Verbosity: Be highly detailed and nuanced, but YOU MUST COMPLETE THE ENTIRE REPORT within limits. Do not trail off or leave sentences unfinished. Pace your writing to ensure the manifesto reaches the 5th section and concludes gracefully.\n"
         f"- Format: Use bolding, bullet points, and sub-headers to make it visually stunning.\n"
         f"Write the COMPLETE report and finish it gracefully.\n\n"
         f"Context:\n{context}"
