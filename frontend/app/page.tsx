@@ -74,8 +74,7 @@ const SidebarContent = memo(function SidebarContent({
         )}
         {history.map((item) => (
           <motion.button
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
+            layout
             key={item.id}
             onClick={() => {
               onSelect(stripThinking(item.report));
@@ -167,6 +166,10 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Stable references — prevents SidebarContent memo from breaking on every keystroke
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const dismissError = useCallback(() => setErrorMsg(null), []);
+
   const fetchHistory = useCallback(async () => {
     const { data, error } = await supabase
       .from("research_history")
@@ -231,7 +234,7 @@ export default function Home() {
 
   /* ------------------------------------------------------------------ */
   return (
-    <div className="relative flex min-h-screen bg-[#030000] text-zinc-300 font-sans tracking-wide selection:bg-red-900/30 overflow-hidden">
+    <div className="relative flex min-h-screen bg-[#030000] text-zinc-300 font-sans tracking-wide selection:bg-red-900/30 overflow-x-hidden">
 
       {/* ── BACKGROUND EFFECTS ─────────────────────────────────────── */}
       {/* Issue #9 fixed: keyframes moved to globals.css — no inline <style> */}
@@ -253,7 +256,7 @@ export default function Home() {
       {/* ── INLINE TOAST (replaces native alert) ────────────────────── */}
       <AnimatePresence>
         {errorMsg && (
-          <ErrorToast message={errorMsg} onDismiss={() => setErrorMsg(null)} />
+          <ErrorToast message={errorMsg} onDismiss={dismissError} />
         )}
       </AnimatePresence>
 
@@ -286,7 +289,7 @@ export default function Home() {
               <SidebarContent
                 history={history}
                 onSelect={setReport}
-                onClose={() => setSidebarOpen(false)}
+                onClose={closeSidebar}
               />
             </motion.aside>
           </>
@@ -298,12 +301,12 @@ export default function Home() {
         <SidebarContent
           history={history}
           onSelect={setReport}
-          onClose={() => setSidebarOpen(false)}
+          onClose={closeSidebar}
         />
       </aside>
 
       {/* ── MAIN CONTENT ────────────────────────────────────────────── */}
-      <main className="relative z-10 flex-1 xl:ml-72 min-h-screen overflow-y-auto">
+      <main className="relative z-10 flex-1 xl:ml-72 min-h-screen">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-12">
 
           {/* HEADER */}
@@ -337,7 +340,7 @@ export default function Home() {
                 <Globe size={11} strokeWidth={1.5} />
                 <span>Live Search</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_12px_rgba(127,29,29,0.1)]">
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_12px_rgba(127,29,29,0.1)]">
                 <Zap size={11} strokeWidth={1.5} />
                 <span>Llama 3.3</span>
               </div>
