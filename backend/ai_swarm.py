@@ -121,17 +121,17 @@ def writer_agent(state: AgentState):
     if len(context) > 12000:
         context = context[:12000] + "... (truncated)"
     prompt = (
-        f"Act as a globally recognized Principal AI Architect and Lead Technical Author. Produce a highly focused, elite-tier Markdown research report on the following topic: {state['query']}\n"
+        f"Act as a globally recognized Principal AI Architect and Lead Technical Author. Produce an exhaustive, highly detailed, and elite-tier Markdown research manifesto on the following topic: {state['query']}\n"
         f"Structure your masterpiece with the following sections:\n"
         f"1. Executive Overview (High-level summary of the landscape)\n"
-        f"2. Deep-Dive Architectural & Contextual Analysis (Key architectural breakdown)\n"
+        f"2. Deep-Dive Architectural & Contextual Analysis (Extensively detailed breakdown)\n"
         f"3. Core Metrics, Economics, & Key Facts (Data-driven evidence)\n"
-        f"4. Prominent Real-World Case Studies (1-2 impactful examples)\n"
+        f"4. Prominent Real-World Case Studies (At least 3 highly detailed examples)\n"
         f"5. Visionary & Optimistic Conclusion (Forward-looking trajectory)\n\n"
         f"CRITICAL DIRECTIVES (STRICT LENGTH LIMITS):\n"
         f"- Tone: Hyper-professional, relentlessly optimistic, highly analytical, and visionary.\n"
-        f"- Verbosity & Length: STRICTLY UNDER 1500 WORDS TOTAL. You are running on a server with hard token limits. If you write too much, you will be forcefully disconnected mid-sentence. Keep sections concise and impactful.\n"
-        f"- Pacing: You MUST reach section 5 and write a complete, elegant conclusion before the token limit cuts you off.\n"
+        f"- Verbosity & Length: Write the most exhaustive, deep, and lengthy report possible, BUT YOU MUST NOT EXCEED 2500 WORDS. You are running on a server with hard token limits. Maximize the depth and quality of the text, but ensure you reach section 5 and gracefully conclude before hitting the limit.\n"
+        f"- Pacing: You MUST reach section 5 and write a complete, elegant conclusion.\n"
         f"- Format: Use bolding, bullet points, and sub-headers to make it visually stunning.\n\n"
         f"Context:\n{context}"
     )
