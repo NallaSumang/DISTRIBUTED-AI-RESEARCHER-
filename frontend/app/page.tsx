@@ -12,6 +12,7 @@ import {
   X,
   Menu,
   ChevronUp,
+  Plus,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -104,9 +105,9 @@ const SidebarContent = memo(function SidebarContent({
 /* ------------------------------------------------------------------ */
 /*  AI SWARM LOADER — replaces the plain single-ring spinner           */
 /* ------------------------------------------------------------------ */
-function SwarmLoader() {
+function SwarmLoader({ stageText, queryText }: { stageText: string; queryText: string }) {
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-8">
       <div className="relative w-14 h-14">
         {/* outer ring — slow clockwise */}
         <div className="absolute inset-0 rounded-full border border-red-950/60 border-t-red-700/70 animate-[spin-slow_3s_linear_infinite]" />
@@ -117,17 +118,26 @@ function SwarmLoader() {
         {/* pulse core */}
         <div className="absolute inset-[18px] rounded-full bg-red-900/20 animate-pulse" />
       </div>
-      <div className="text-center space-y-1">
-        <p className="text-[11px] font-light tracking-[0.25em] text-zinc-400 uppercase">
-          Synthesizing Intelligence
+      <div className="text-center space-y-4">
+        <p className="text-sm font-light text-zinc-300 bg-white/[0.02] border border-white/[0.04] px-5 py-2 rounded-xl backdrop-blur-sm max-w-md mx-auto line-clamp-2">
+          Researching: <span className="font-semibold text-white">&quot;{queryText}&quot;</span>
         </p>
-        <p className="text-[9px] tracking-[0.2em] text-zinc-600 uppercase">
-          Swarm agents active
+        <p className="text-[11px] font-medium tracking-[0.25em] text-red-500/90 uppercase animate-pulse">
+          {stageText}
         </p>
       </div>
     </div>
   );
 }
+
+const LOADING_STAGES = [
+  "Initializing Swarm Engine...",
+  "Deploying Architect Agent...",
+  "Scouts Extracting Data...",
+  "Cross-referencing Sources...",
+  "Synthesizing Intelligence...",
+  "Formatting Masterpiece..."
+];
 
 /* ------------------------------------------------------------------ */
 /*  TOAST — inline error notification, replaces native alert()         */
@@ -160,6 +170,7 @@ function ErrorToast({ message, onDismiss }: ToastProps) {
 export default function Home() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState(0);
   const [jobId, setJobId] = useState<string | null>(null);
   const [report, setReport] = useState("");
   const [history, setHistory] = useState<ResearchItem[]>([]);
@@ -169,6 +180,15 @@ export default function Home() {
   // Stable references — prevents SidebarContent memo from breaking on every keystroke
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const dismissError = useCallback(() => setErrorMsg(null), []);
+  
+  const clearChat = useCallback(() => {
+    setReport("");
+    setQuery("");
+    setJobId(null);
+    setLoading(false);
+    setErrorMsg(null);
+    setLoadingStage(0);
+  }, []);
 
   const fetchHistory = useCallback(async () => {
     const { data, error } = await supabase
@@ -188,6 +208,9 @@ export default function Home() {
         try {
           const res = await fetch(`/api/proxy?jobId=${jobId}`);
           if (!res.ok) throw new Error("Polling failed");
+          
+          setLoadingStage((prev) => Math.min(prev + 1, LOADING_STAGES.length - 1));
+          
           const data = await res.json();
           if (data.status === "completed") {
             setReport(stripThinking(data.data));
@@ -212,6 +235,7 @@ export default function Home() {
   const handleSearch = async () => {
     if (!query || loading) return;
     setLoading(true);
+    setLoadingStage(0);
     setReport("");
     setErrorMsg(null);
     setSidebarOpen(false);
@@ -335,8 +359,17 @@ export default function Home() {
             </div>
 
             {/* Status badges */}
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <button
+                onClick={clearChat}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/[0.05] bg-white/[0.03] hover:bg-white/[0.08] hover:border-red-900/30 text-[9px] font-bold text-zinc-100 tracking-[0.2em] uppercase transition-all duration-300 shadow-lg shadow-black/50"
+              >
+                <Plus size={12} strokeWidth={2.5} />
+                <span className="hidden sm:inline">New Research</span>
+                <span className="sm:hidden">New</span>
+              </button>
+
+              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase">
                 <Globe size={11} strokeWidth={1.5} />
                 <span>Live Search</span>
               </div>
@@ -388,7 +421,7 @@ export default function Home() {
                 className="py-24 flex justify-center"
               >
                 {/* Issue #5 fixed: 3-ring swarm loader replaces single animate-spin ring */}
-                <SwarmLoader />
+                <SwarmLoader stageText={LOADING_STAGES[loadingStage]} queryText={query} />
               </motion.div>
             )}
 
