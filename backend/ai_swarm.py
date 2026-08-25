@@ -18,17 +18,17 @@ class AgentState(TypedDict):
 
 # Planner: lightweight — only needs a short JSON list output
 planner_llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="qwen/qwen3.6-27b",
     temperature=0,
     max_tokens=512,
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# Writer: needs large output budget for full detailed reports
+# Writer: needs large output budget for full detailed reports (reduced to 4096 for Groq Free Tier limits)
 writer_llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="qwen/qwen3.6-27b",
     temperature=0,
-    max_tokens=8192,
+    max_tokens=4096,
     api_key=os.getenv("GROQ_API_KEY")
 )
 
@@ -49,18 +49,21 @@ def planner_agent(state: AgentState):
     try:
         res = planner_llm.invoke([HumanMessage(content=prompt)])
         content = strip_thinking(res.content)
-        if content.startswith("```json"):
-            content = content[7:-3].strip()
+        
+        # Robustly extract JSON array using regex
+        match = re.search(r'\[.*\]', content, re.DOTALL)
+        if match:
+            content = match.group(0)
+            
         queries = json.loads(content)
         if not isinstance(queries, list):
             queries = [state['query']]
     except Exception as e:
-        print(f"   ⚠️ Planning parsing failed: {e}")
+        print(f"   [!] Planning parsing failed: {e}")
         queries = [state['query']]
     return {"sub_queries": queries}
 
 import asyncio
-from duckduckgo_search import AsyncDDGS
 
 async def get_single_query(query):
     try:
@@ -71,9 +74,12 @@ async def get_single_query(query):
             response = await client.search(query=query, max_results=4)
             return [f"Source: {r['url']}\n{r['content']}" for r in response['results']]
         else:
-            async with AsyncDDGS() as ddgs:
-                results = await ddgs.text(query, max_results=4)
-                return [f"Source: {r['href']}\n{r['body']}" for r in results]
+            from duckduckgo_search import DDGS
+            def _sync_search():
+                with DDGS() as ddgs:
+                    return list(ddgs.text(query, max_results=4))
+            results = await asyncio.to_thread(_sync_search)
+            return [f"Source: {r['href']}\n{r['body']}" for r in results]
     except Exception as e:
         print(f"   ⚠️ Search failed for '{query}': {e}")
         return [f"Search failed for: {query}"]
@@ -98,9 +104,9 @@ def search_agent(state: AgentState):
 def writer_agent(state: AgentState):
     print("   -> Writing...")
     context = "\n\n".join(state['raw_data'])
-    # Truncate context to fit Qwen3's 32k context window
-    if len(context) > 32000:
-        context = context[:32000] + "... (truncated)"
+    # Truncate context to ~12000 chars (~3000 tokens) to ensure prompt_tokens + max_tokens(4096) < Groq's 8000 TPM limit
+    if len(context) > 12000:
+        context = context[:12000] + "... (truncated)"
     prompt = (
         f"Write a comprehensive, detailed, professional Markdown research report for: {state['query']}\n"
         f"Include all sections: overview, detailed analysis, key facts, examples, criticisms, and conclusion.\n"
