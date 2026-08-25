@@ -1,134 +1,197 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python Version"/>
-  <img src="https://img.shields.io/badge/Next.js-15-black.svg" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python"/>
+  <img src="https://img.shields.io/badge/Next.js-16-black.svg" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/LangGraph-1.1.10-purple.svg" alt="LangGraph"/>
   <img src="https://img.shields.io/badge/Database-Supabase-green.svg" alt="Supabase"/>
-  <img src="https://img.shields.io/badge/Queue-Redis-red.svg" alt="Redis"/>
-  
+  <img src="https://img.shields.io/badge/Queue-Upstash_Redis-red.svg" alt="Redis"/>
+  <img src="https://img.shields.io/badge/LLM-Llama_3.3_70B-orange.svg" alt="Llama"/>
+  <img src="https://img.shields.io/badge/Backend-HuggingFace_Spaces-yellow.svg" alt="HuggingFace"/>
+
   <h1>🧠 Distributed AI Researcher</h1>
-  <p>An asynchronous, distributed Swarm Intelligence architecture designed for autonomous web research, data synthesis, and structured reporting.</p>
+  <p><em>Sumang's Signature Edition</em></p>
+  <p>An asynchronous, distributed Swarm Intelligence platform for autonomous deep-web research, parallel synthesis, and structured Markdown reporting — deployed at production scale.</p>
 </div>
 
 ---
 
 ## 📖 Overview
 
-The **Distributed AI Researcher** is an advanced autonomous research system. Rather than relying on a single blocking LLM call, it orchestrates a swarm of specialized AI agents that execute in parallel. By combining **LangGraph** for workflow routing, **FastAPI** for orchestration, and **Redis** for asynchronous job queuing, the system executes deep-dive internet research at scale without I/O bottlenecks.
+**Distributed AI Researcher** was born out of a simple problem: LLM inference is slow. HTTP has timeouts. Blocking a web request for 30–120 seconds of LLM work causes 504 Gateway Timeouts and a terrible user experience.
+
+This system replaces the single-threaded LLM call model with a genuine multi-agent swarm using a **fire-and-forget job queue pattern**. A **LangGraph** pipeline coordinates three specialized agents: an Architect that decomposes the query, Scout agents that search the web concurrently, and a Synthesizer that fuses all findings into a professional report. 
+
+**Key design properties:**
+- **Non-blocking**: FastAPI returns a `job_id` immediately; work happens asynchronously in the worker daemon. The frontend stays completely responsive.
+- **Persistent**: Every report is archived to Supabase (PostgreSQL) and surfaced in the sidebar history.
+- **Secure**: API keys never reach the browser — all backend requests flow through a Next.js BFF proxy.
+- **Resilient**: HuggingFace Spaces cold-start is handled gracefully in the UI with an animated inline toast.
+
+---
 
 ## 🏗️ System Architecture
 
-The application is decoupled into a frontend presentation layer and a persistent backend worker daemon, connected via a message broker. This ensures UI responsiveness even during long-running generative tasks.
-
-```mermaid
-graph TD
-    %% Custom Styles
-    classDef primary fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff,rx:6px
-    classDef queue fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#fff,rx:6px
-    classDef db fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff,rx:6px
-    classDef ai fill:#7c3aed,stroke:#6d28d9,stroke-width:2px,color:#fff,rx:6px
-    classDef worker fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#fff,rx:6px
-
-    %% Nodes
-    Client["💻 Next.js Client"]:::primary
-    Proxy["🛡️ Next.js API Proxy"]:::primary
-    API["⚡ FastAPI Orchestrator"]:::primary
-    Redis[("🟥 Upstash Redis<br>(Queue & Cache)")]:::queue
-    Supabase[("🟩 Supabase<br>(PostgreSQL)")]:::db
-
-    %% Logical Grouping
-    subgraph Backend ["⚙️ Background Processing"]
-        Worker["Python Worker Daemon"]:::worker
-        
-        subgraph Swarm ["🧠 LangGraph AI Swarm"]
-            Architect["🎯 Architect Agent<br>(Topic Breakdown)"]:::ai
-            Scouts["🔍 Async Scouts<br>(Parallel DDGS)"]:::ai
-            Synthesizer["✍️ Synthesizer Agent<br>(Markdown Generation)"]:::ai
-            
-            Architect -->|Extract Sub-queries| Scouts
-            Scouts -->|Scraped Context| Synthesizer
-        end
-        Worker -->|Initiate Workflow| Architect
-    end
-
-    %% Data Flow
-    Client -->|1. Submit Query| Proxy
-    Proxy -->|2. Authenticated Request| API
-    API -->|3. Push Job| Redis
-    Redis -->|4. BRPOP Listen| Worker
-    
-    Synthesizer -->|5a. Archive Report| Supabase
-    Synthesizer -.->|5b. Cache Result| Redis
-    
-    Client -.->|6. Poll Status| Proxy
-    Proxy -.->|7. Fetch Result| API
-    API -.->|8. Retrieve Data| Redis
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        VERCEL (Frontend)                        │
+│                                                                 │
+│   Next.js 16 (App Router)                                       │
+│   ├── /app/page.tsx        — Main UI: search, sidebar, report   │
+│   ├── /app/api/proxy/      — BFF server-side proxy              │
+│   └── /app/globals.css     — Professional typography system     │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │  HTTPS + x-api-key (injected server-side)
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│               HUGGINGFACE SPACES (Backend — Docker)             │
+│                                                                 │
+│   FastAPI  (main.py) — Port 7860                                │
+│   ├── POST /research     → Enqueue job, return job_id           │
+│   └── GET  /job/{id}     → Poll Redis for status + result       │
+│                                                                 │
+│   Python Worker Daemon  (worker.py)                             │
+│   └── BRPOP Redis queue → triggers LangGraph pipeline           │
+│                                                                 │
+│   LangGraph AI Swarm  (ai_swarm.py)                             │
+│   ├── Architect Agent    — Query decomposition (Llama 3.3 70B)  │
+│   ├── Scout Agents       — Parallel DuckDuckGo search           │
+│   └── Synthesizer Agent  — Final Markdown report generation     │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+   Upstash Redis     Supabase DB       Groq Cloud API
+   (job queue)    (report archive)   (Llama 3.3 70B)
 ```
 
-## 🔐 Security Architecture
+### 🔄 The Data Flow
 
-To ensure enterprise-grade security across the distributed environment:
-* **BFF (Backend-For-Frontend) Proxy:** The Next.js frontend routes all requests through a server-side API proxy (`/api/proxy`). This ensures that the secret API keys are never bundled into the client-side browser code (avoiding `NEXT_PUBLIC_` exposure).
-* **FastAPI Gateway:** The Python backend implements a strict `x-api-key` validation layer using FastAPI's `Security` dependencies. It immediately drops any unauthenticated requests with a `401 Unauthorized` before they can reach the job queue, protecting the system from unauthorized resource consumption.
+1. **Request**: You type a query and hit Execute. Next.js instantly proxies this to FastAPI, which pushes the job to Redis and returns a UUID in < 100ms.
+2. **Polling**: The UI spins up a gorgeous 3-ring `SwarmLoader` and pings for updates every 2 seconds.
+3. **Execution**: A background Python worker wakes up from its `BRPOP` sleep, grabs the job, and unleashes the AI swarm.
+4. **Delivery**: The report is saved to Redis and permanently archived in Supabase. The frontend catches the completed status, kills the polling loop, and renders the Markdown beautifully.
+
+---
+
+## 🤖 The AI Swarm Pipeline
+
+We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through three specialized agents:
+
+1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. (e.g., "quantum computing" becomes "quantum computing error correction 2024", "commercial applications", etc.)
+2. **The Scouts**: We fire off DuckDuckGo searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
+3. **The Synthesizer**: Armed with a 32k context window and a massive 8192 output token limit, this agent fuses all the scout data into a master Markdown report with citations.
+
+---
+
+## 🎨 UI & Design System
+
+The aesthetics are unapologetically premium — dubbed the *Sumang Signature Edition*.
+
+- **Deep Aesthetics**: Built on a `#030000` true-black canvas with subtle red gradients, floating ember particles, and a scanning laser line powered by custom CSS `@keyframes`.
+- **Typography System**: We completely bypassed Tailwind's prose modifiers to build a hand-tuned `.report-body` class. It features crisp `#f5f5f5` headings with red accent bars, Catppuccin-styled code blocks, and ghost-underlined links.
+- **Smart Components**: The `ErrorToast` handles backend cold-starts gracefully via Framer Motion, and the `SidebarContent` is deeply memoized to prevent React re-render flashes during typing.
+
+---
+
+## 🔐 Security Model
+
+| Layer | Mechanism |
+|---|---|
+| **Browser → Next.js** | Public request — zero secrets exposed. |
+| **Next.js → FastAPI** | The BFF proxy injects an `x-api-key` header server-side. |
+| **FastAPI** | Validates the key via a `Security` dependency; rejects unauthorized traffic with a 401. |
+| **Env vars** | `.env` never committed; `.env.example` is the contract. |
+| **Supabase** | Anon key only on client (Row Level Security enforced server-side). |
+
+---
 
 ## 🛠️ Technology Stack
 
 ### Frontend
-* **Framework:** Next.js 15
-* **Styling:** TailwindCSS & React
-* **Role:** Submits research topics and polls the backend for job completion, rendering the final synthesized Markdown reports.
+- **Framework**: Next.js 16.2 (App Router, SSR, API proxy)
+- **Styling**: Tailwind CSS 4.x + Framer Motion 12.x
+- **Rendering**: `react-markdown` (v9) + `remark-gfm` (v4) with native ESM resolution via `serverExternalPackages`.
+- **Database Client**: Supabase JS
 
-### Backend Orchestration
-* **API:** FastAPI (Python)
-* **Message Broker:** Upstash Redis (Operating as a persistent, asynchronous job queue to prevent HTTP 504 timeouts).
-* **Database:** Supabase (Standard PostgreSQL CRUD operations for permanent report archival and history).
-
-### Swarm Intelligence (AI Agents)
-The core reasoning engine leverages **LangGraph** and an asynchronous I/O model:
-
-1. **The Architect Agent (LLaMA 3.3 via Groq):** 
-   Receives the broad topic and utilizes strictly structured outputs (Pydantic models) to break the query down into 3 hyper-specific sub-queries.
-   
-2. **The Scout Agents (Async I/O):** 
-   Utilizing `duckduckgo-search` and Python's `asyncio`, the system fires all scout requests concurrently. By replacing blocking synchronous loops with true parallel I/O, network latency is drastically minimized.
-   
-3. **The Synthesizer Agent (LLaMA 3.3 via Groq):** 
-   Aggregates the concurrent findings from the scouts and synthesizes a singular, cohesive, professional Markdown document.
+### Backend
+- **Core**: FastAPI + Uvicorn
+- **AI/LLM**: LangGraph + LangChain-Groq (Llama 3.3 70B Versatile)
+- **Search**: DuckDuckGo Async + Tavily
+- **Data Layer**: Upstash Redis + Supabase (PostgreSQL)
 
 ---
 
 ## 🌐 Production Deployment
 
-| Component | Platform | URL |
-| :--- | :--- | :--- |
-| **Frontend** | Vercel | [distributed-ai-researcher.vercel.app](https://distributed-ai-researcher.vercel.app) |
-| **Backend** | Hugging Face Spaces (Docker) | Dockerized FastAPI on port 7860 |
+| Component | Platform | Notes |
+|---|---|---|
+| **Frontend** | Vercel | Auto-deploys on every push to `main` |
+| **Backend** | HuggingFace Spaces (Docker) | Auto-synced via `.github/workflows/sync-to-hf.yml` |
 
-The backend is deployed as a single Docker container on Hugging Face Spaces. The `Dockerfile` starts both the FastAPI orchestrator and the Redis queue worker as a background process in the same container (`python worker.py & python main.py`).
+### ⚠️ Known Behaviours & Quirks
+- **HuggingFace Cold-Start**: Free-tier Spaces sleep after inactivity. The first request may take 30–60 seconds. The UI displays an animated inline toast noting the cold-start. This is expected behaviour.
+- **Reasoning Models**: If switched to a model like Qwen3, it emits `<think>` blocks. We dynamically strip these out before rendering to keep the report clean.
+- **Redis TTL**: Job results expire from the Redis cache after 1 hour, but remain permanently in the Supabase history.
 
 ---
 
 ## 🚀 Local Development
 
-### 1. Initialize the Backend
-Ensure you have your environment variables set (`.env` file with `UPSTASH_REDIS_URI`, `GROQ_API_KEY`, `SUPABASE_KEY`, `SUPABASE_URL`).
-```bash
-cd backend
-pip install -r requirements.txt
+### Prerequisites
+- Python 3.11+ and Node.js 18+
+- Upstash Redis instance (free tier)
+- Supabase project with a `research_history` table
+- Groq API key
 
-# Start the FastAPI Orchestrator
-python main.py
-```
-*(In a separate terminal, initialize the continuous queue worker):*
+### 1. Backend
+
 ```bash
 cd backend
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS/Linux
+pip install -r requirements.txt
+```
+
+Create `backend/.env`:
+```env
+GROQ_API_KEY=gsk_...
+UPSTASH_REDIS_URI=rediss://...
+SUPABASE_URL=https://xyz.supabase.co
+SUPABASE_KEY=your_service_role_key
+API_SECRET_KEY=any_strong_random_string
+```
+
+Run both services:
+```bash
+# Terminal 1 — FastAPI orchestrator
+uvicorn main:app --reload --port 7860
+
+# Terminal 2 — Worker daemon (must stay running)
 python worker.py
 ```
 
-### 2. Launch the Frontend
+### 2. Frontend
+
 ```bash
 cd frontend
 npm install
-npm run dev
 ```
 
+Create `frontend/.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xyz.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+API_BASE=http://localhost:7860
+INTERNAL_API_KEY=any_strong_random_string   # must match backend API_SECRET_KEY
+```
+
+```bash
+npm run dev
+# → http://localhost:3000
+```
+
+---
+
 ## 📜 License
+
 Distributed under the MIT License.
