@@ -49,7 +49,11 @@ def strip_thinking(text: str) -> str:
 
 def planner_agent(state: AgentState):
     print("   -> Planning...")
-    prompt = f"Break this into 3 search queries: '{state['query']}'. Return ONLY a raw JSON list of strings, with no other text, markdown, or schema."
+    prompt = (
+        f"As a senior research architect, decompose the following topic into 5 highly targeted, distinct search queries to maximize the breadth and depth of data retrieved.\n"
+        f"Topic: '{state['query']}'\n"
+        f"Return ONLY a raw JSON list of strings, with no other text, markdown, or schema."
+    )
     try:
         res = planner_llm.invoke([HumanMessage(content=prompt)])
         content = strip_thinking(res.content)
@@ -80,13 +84,13 @@ async def get_single_query(query):
         if tavily_key:
             from tavily import AsyncTavilyClient
             client = AsyncTavilyClient(api_key=tavily_key)
-            response = await client.search(query=query, max_results=4)
+            response = await client.search(query=query, max_results=6)
             return [f"Source: {r['url']}\n{r['content']}" for r in response['results']]
         else:
             from duckduckgo_search import DDGS
             def _sync_search():
                 with DDGS() as ddgs:
-                    return list(ddgs.text(query, max_results=4))
+                    return list(ddgs.text(query, max_results=6))
             results = await asyncio.to_thread(_sync_search)
             return [f"Source: {r['href']}\n{r['body']}" for r in results]
     except Exception as e:
@@ -117,9 +121,18 @@ def writer_agent(state: AgentState):
     if len(context) > 12000:
         context = context[:12000] + "... (truncated)"
     prompt = (
-        f"Write a professional Markdown research report for: {state['query']}\n"
-        f"Include sections: overview, detailed analysis, key facts, examples, and conclusion.\n"
-        f"CRITICAL: Keep the report concise (under 1200 words). Do NOT overwrite, or your response will be truncated. Write the COMPLETE report and finish it gracefully.\n\n"
+        f"Act as a globally recognized Principal AI Architect and Lead Technical Author. Produce an exhaustive, elite-tier Markdown research manifesto on the following topic: {state['query']}\n"
+        f"Structure your masterpiece with the following sections:\n"
+        f"1. Executive Overview (High-level summary of the landscape)\n"
+        f"2. Deep-Dive Architectural & Contextual Analysis (Extensively detailed breakdown)\n"
+        f"3. Core Metrics, Economics, & Key Facts (Data-driven evidence)\n"
+        f"4. Prominent Real-World Case Studies (At least 3 highly detailed examples)\n"
+        f"5. Visionary & Optimistic Conclusion (Forward-looking trajectory)\n\n"
+        f"CRITICAL DIRECTIVES:\n"
+        f"- Tone: Hyper-professional, relentlessly optimistic, highly analytical, and visionary.\n"
+        f"- Verbosity: This must be a MASSIVE, multi-page document. Expand on EVERY single point. Do not summarize briefly. Provide extreme nuance and technical/contextual depth.\n"
+        f"- Format: Use bolding, bullet points, and sub-headers to make it visually stunning.\n"
+        f"Write the COMPLETE report and finish it gracefully.\n\n"
         f"Context:\n{context}"
     )
     res = writer_llm.invoke([HumanMessage(content=prompt)])

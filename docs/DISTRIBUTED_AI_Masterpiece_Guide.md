@@ -266,20 +266,20 @@ graph.set_finish_point("synthesizer")
 ### Agent 1: Architect
 
 **Input**: User's raw query string
-**Output**: Pydantic model with 3–5 sub-queries
+**Output**: Pydantic model with 5 sub-queries
 
-The Architect uses a structured output schema enforced by Pydantic. The Groq LLM is instructed to return JSON only. This prevents free-form rambling and ensures every sub-query is actionable for the Scout agents.
+The Architect uses a structured output schema enforced by Pydantic. The Groq LLM is instructed to act as a Senior Research Architect and return JSON only. This prevents free-form rambling and ensures every sub-query is actionable for the Scout agents.
 
 **Robust Parsing**: Reasoning models often inject `<think>` blocks or wrap JSON in Markdown code blocks (e.g., ````json`). Instead of brittle string slicing, the Architect uses a robust Regex extractor (`re.search(r'\[.*\]', content, re.DOTALL)`) to guarantee the JSON array is always successfully isolated and parsed.
 
-**Why decompose?** A single broad query like "quantum computing" produces shallow results. Breaking it into "quantum computing error correction 2024", "quantum computing commercial applications", "quantum supremacy milestones" produces three targeted search payloads that return deeper, more specific content.
+**Why decompose?** A single broad query like "quantum computing" produces shallow results. Breaking it into 5 targeted sub-queries produces deeper, more specific content.
 
 ### Agent 2: Scouts (Parallel)
 
 **Input**: List of sub-queries from Architect
 **Output**: Dict mapping sub-query → raw search results
 
-Uses `asyncio.gather` to fire all DuckDuckGo searches concurrently. Each search retrieves the top 4 results (increased from 2 in an earlier version). Results are title + snippet + URL.
+Uses `asyncio.gather` to fire all DuckDuckGo searches concurrently. Each search retrieves the top 6 results (increased to provide a larger context block). Results are title + snippet + URL.
 
 **No blocking I/O**: The entire scout phase completes in approximately the time of a single search request (not N × time), because all requests are in-flight simultaneously.
 
@@ -288,13 +288,14 @@ Uses `asyncio.gather` to fire all DuckDuckGo searches concurrently. Each search 
 **Input**: All scout results concatenated (context up to 32k tokens)
 **Output**: Full Markdown report
 
-The Synthesizer receives a structured prompt containing all scout findings and is instructed to produce:
-- A professional executive summary
-- Numbered or bulleted sections per sub-topic
-- Source attributions where relevant
-- A conclusions section
+The Synthesizer receives a structured prompt containing all scout findings (up to 30 results) and is instructed to produce a highly detailed, multi-page manifesto:
+- Executive Overview
+- Deep-Dive Architectural & Contextual Analysis
+- Core Metrics, Economics, & Key Facts
+- Prominent Real-World Case Studies
+- Visionary & Optimistic Conclusion
 
-`max_tokens=4096` ensures reports are detailed while strictly remaining under the 8,000 Tokens Per Minute (TPM) limit of the Groq Free Tier (Groq calculates limits by adding `max_tokens` + prompt context). The context is aggressively truncated to 12,000 characters (~3,000 tokens) to guarantee the combined request never triggers a 413 Rate Limit Error.
+`max_tokens=4096` ensures reports are detailed while strictly remaining under the 8,000 Tokens Per Minute (TPM) limit of the Groq Free Tier. The context is truncated to 12,000 characters (~3,000 tokens) to guarantee the combined request never triggers a 413 Rate Limit Error.
 
 ### Agent 4 (Virtual): Multi-Model Fallback Chain
 
@@ -367,10 +368,10 @@ On every push to `main`, the workflow:
 | Surface | `rgba(255,255,255,0.01)` | Cards, sidebars |
 | Border | `rgba(255,255,255,0.03–0.06)` | Hairline separators |
 | Brand red | `#dc2626` | Accents, h2 bars |
-| Text primary | `#f5f5f5` | H1 headings |
-| Text secondary | `#b0bec5` | Body copy |
-| Text muted | `#78909c` | Blockquotes, timestamps |
-| Link | `#f87171` | In-report links |
+| Text primary | `#ffffff` | H1 headings (with gradient), Bold text |
+| Text secondary | `#f1f5f9` | Body copy |
+| Text muted | `#cbd5e1` | Uppercase labels, italics |
+| Link | `#fca5a5` | In-report links |
 | Error | `#fca5a5` | Toast, error states |
 
 ### Animation Keyframes (globals.css)
