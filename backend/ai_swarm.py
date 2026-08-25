@@ -16,21 +16,25 @@ class AgentState(TypedDict):
     raw_data: List[str]
     final_report: str
 
+def create_llm_chain(max_tokens: int):
+    api_key = os.getenv("GROQ_API_KEY")
+    # Primary model (currently known to work for this key)
+    primary = ChatGroq(model="qwen/qwen3.6-27b", temperature=0, max_tokens=max_tokens, api_key=api_key)
+    
+    # Fallback models (in case of 404, 413 Rate Limit, or 503 Downtime)
+    fallbacks = [
+        ChatGroq(model="llama3-8b-8192", temperature=0, max_tokens=max_tokens, api_key=api_key),
+        ChatGroq(model="mixtral-8x7b-32768", temperature=0, max_tokens=max_tokens, api_key=api_key),
+        ChatGroq(model="llama-3.3-70b-versatile", temperature=0, max_tokens=max_tokens, api_key=api_key),
+        ChatGroq(model="gemma2-9b-it", temperature=0, max_tokens=max_tokens, api_key=api_key)
+    ]
+    return primary.with_fallbacks(fallbacks)
+
 # Planner: lightweight — only needs a short JSON list output
-planner_llm = ChatGroq(
-    model="qwen/qwen3.6-27b",
-    temperature=0,
-    max_tokens=512,
-    api_key=os.getenv("GROQ_API_KEY")
-)
+planner_llm = create_llm_chain(max_tokens=512)
 
 # Writer: needs large output budget for full detailed reports (reduced to 4096 for Groq Free Tier limits)
-writer_llm = ChatGroq(
-    model="qwen/qwen3.6-27b",
-    temperature=0,
-    max_tokens=4096,
-    api_key=os.getenv("GROQ_API_KEY")
-)
+writer_llm = create_llm_chain(max_tokens=4096)
 
 from pydantic import BaseModel, Field
 
