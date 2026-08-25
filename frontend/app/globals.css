@@ -97,10 +97,10 @@ body {
 }
 
 .report-body h1 {
-  font-size: 2.2rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  border-bottom: 2px solid rgba(255,255,255,0.1);
+  font-size: 1.8rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   padding-bottom: 0.5em;
   background: linear-gradient(to right, #ffffff, #9ca3af);
   -webkit-background-clip: text;
@@ -108,9 +108,9 @@ body {
 }
 
 .report-body h2 {
-  font-size: 1.5rem;
-  color: #ffffff;
-  font-weight: 600;
+  font-size: 1.25rem;
+  color: #f8fafc;
+  font-weight: 500;
   position: relative;
   padding-left: 1em;
 }
