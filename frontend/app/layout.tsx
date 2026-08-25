@@ -13,8 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Swarm Intelligence — AI Research Agent",
-  description: "Distributed AI research agent powered by Llama 3.3 70B",
+  title: "Distributed AI Researcher — Deep Research Swarm",
+  description:
+    "Autonomous AI research agent powered by Llama 3.3 70B. Dispatches a swarm of parallel agents to synthesise deep, structured reports on any topic in real time.",
+  keywords: ["AI research", "LLM", "swarm intelligence", "Llama 3.3", "deep research"],
 };
 
 export default function RootLayout({
