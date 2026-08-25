@@ -58,14 +58,19 @@ def planner_agent(state: AgentState):
         match = re.search(r'\[.*\]', content, re.DOTALL)
         if match:
             content = match.group(0)
-            
-        queries = json.loads(content)
-        if not isinstance(queries, list):
-            queries = [state['query']]
+        
+        try:
+            parsed = json.loads(content)
+            if isinstance(parsed, list) and len(parsed) > 0:
+                return {"sub_queries": parsed[:5]}
+            else:
+                return {"sub_queries": [state['query']]}
+        except json.decoder.JSONDecodeError:
+            # Absolute fallback if LLM completely hallucinates non-JSON
+            return {"sub_queries": [state['query']]}
     except Exception as e:
         print(f"   [!] Planning parsing failed: {e}")
-        queries = [state['query']]
-    return {"sub_queries": queries}
+        return {"sub_queries": [state['query']]}
 
 import asyncio
 
@@ -112,9 +117,9 @@ def writer_agent(state: AgentState):
     if len(context) > 12000:
         context = context[:12000] + "... (truncated)"
     prompt = (
-        f"Write a comprehensive, detailed, professional Markdown research report for: {state['query']}\n"
-        f"Include all sections: overview, detailed analysis, key facts, examples, criticisms, and conclusion.\n"
-        f"Do NOT stop early. Write the COMPLETE report.\n\n"
+        f"Write a professional Markdown research report for: {state['query']}\n"
+        f"Include sections: overview, detailed analysis, key facts, examples, and conclusion.\n"
+        f"CRITICAL: Keep the report concise (under 1200 words). Do NOT overwrite, or your response will be truncated. Write the COMPLETE report and finish it gracefully.\n\n"
         f"Context:\n{context}"
     )
     res = writer_llm.invoke([HumanMessage(content=prompt)])

@@ -74,11 +74,11 @@ This system replaces the single-threaded LLM call model with a genuine multi-age
 
 ## 🤖 The AI Swarm Pipeline
 
-We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through specialized agents, backed by an **indestructible Multi-Model Fallback Chain**. If the primary model (Qwen) hits a rate limit or goes down, the system silently cascades through Llama 3 8B, Mixtral 8x7B, Llama 3.3 70B, and Gemma 2.
+We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through specialized agents, backed by a **Multi-Model Fallback Chain**. If the primary model (Qwen) is rate-limited or unavailable, the system cascades through Llama 3 8B, Mixtral 8x7B, Llama 3.3 70B, and Gemma 2.
 
-1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. A custom robust Regex engine parses the output so it never fails even if the AI hallucinates bad markdown.
-2. **The Scouts**: We fire off DuckDuckGo (sync wrapper) or Tavily searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
-3. **The Synthesizer**: Armed with a carefully truncated context window and a 4096 output token limit, this agent fuses all the scout data into a master Markdown report with citations — perfectly calibrated to run inside the Groq Free Tier.
+1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. A robust Regex engine parses the output to handle varying LLM markdown formats.
+2. **The Scouts**: We fire off DuckDuckGo or Tavily searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
+3. **The Synthesizer**: Armed with a truncated context window and a strict output token limit, this agent fuses all the scout data into a master Markdown report with citations — safely tuned to operate within free tier API constraints.
 
 ---
 
