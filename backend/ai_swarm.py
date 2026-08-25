@@ -117,9 +117,9 @@ def search_agent(state: AgentState):
 def writer_agent(state: AgentState):
     print("   -> Writing...")
     context = "\n\n".join(state['raw_data'])
-    # Truncate context to ~12000 chars (~3000 tokens) to ensure prompt_tokens + max_tokens(4096) < Groq's 8000 TPM limit
-    if len(context) > 12000:
-        context = context[:12000] + "... (truncated)"
+    # Truncate context to ~6000 chars (~1500 tokens) to ensure prompt_tokens + max_tokens < Groq's 6000 TPM limit
+    if len(context) > 6000:
+        context = context[:6000] + "... (truncated)"
     prompt = (
         f"Act as a globally recognized Principal AI Architect and Lead Technical Author. Produce an exhaustive, highly detailed, and elite-tier Markdown research manifesto on the following topic: {state['query']}\n"
         f"Structure your masterpiece with the following sections:\n"
@@ -130,7 +130,7 @@ def writer_agent(state: AgentState):
         f"5. Visionary & Optimistic Conclusion (Forward-looking trajectory)\n\n"
         f"CRITICAL DIRECTIVES (STRICT LENGTH LIMITS):\n"
         f"- Tone: Hyper-professional, relentlessly optimistic, highly analytical, and visionary.\n"
-        f"- Verbosity & Length: Write the most exhaustive, deep, and lengthy report possible, BUT YOU MUST NOT EXCEED 2500 WORDS. You are running on a server with hard token limits. Maximize the depth and quality of the text, but ensure you reach section 5 and gracefully conclude before hitting the limit.\n"
+        f"- Verbosity & Length: Write the most exhaustive, deep, and lengthy report possible, BUT YOU MUST NOT EXCEED 2000 WORDS. You are running on a server with hard token limits. Maximize the depth and quality of the text, but ensure you reach section 5 and gracefully conclude before hitting the limit.\n"
         f"- Pacing: You MUST reach section 5 and write a complete, elegant conclusion.\n"
         f"- Format: Use bolding, bullet points, and sub-headers to make it visually stunning.\n\n"
         f"Context:\n{context}"
