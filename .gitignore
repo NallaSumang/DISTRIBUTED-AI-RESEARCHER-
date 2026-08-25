@@ -27,3 +27,4 @@ secrets.json
 *.secretdocs/
 backend/tests/
 docs/DISTRIBUTED_AI_Masterpiece_Guide.md
+swarm-research-engine/
