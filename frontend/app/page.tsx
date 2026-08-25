@@ -105,9 +105,9 @@ const SidebarContent = memo(function SidebarContent({
 /* ------------------------------------------------------------------ */
 /*  AI SWARM LOADER — replaces the plain single-ring spinner           */
 /* ------------------------------------------------------------------ */
-function SwarmLoader({ stageText, queryText }: { stageText: string; queryText: string }) {
+function SwarmLoader({ stageText }: { stageText: string }) {
   return (
-    <div className="flex flex-col items-center gap-8">
+    <div className="flex flex-col items-center gap-6">
       <div className="relative w-14 h-14">
         {/* outer ring — slow clockwise */}
         <div className="absolute inset-0 rounded-full border border-red-950/60 border-t-red-700/70 animate-[spin-slow_3s_linear_infinite]" />
@@ -118,11 +118,8 @@ function SwarmLoader({ stageText, queryText }: { stageText: string; queryText: s
         {/* pulse core */}
         <div className="absolute inset-[18px] rounded-full bg-red-900/20 animate-pulse" />
       </div>
-      <div className="text-center space-y-4">
-        <p className="text-sm font-light text-zinc-300 bg-white/[0.02] border border-white/[0.04] px-5 py-2 rounded-xl backdrop-blur-sm max-w-md mx-auto line-clamp-2">
-          Researching: <span className="font-semibold text-white">&quot;{queryText}&quot;</span>
-        </p>
-        <p className="text-[11px] font-medium tracking-[0.25em] text-red-500/90 uppercase animate-pulse">
+      <div className="text-center">
+        <p className="text-[11px] font-light tracking-[0.25em] text-red-500/80 uppercase animate-pulse">
           {stageText}
         </p>
       </div>
@@ -362,9 +359,9 @@ export default function Home() {
             <div className="flex items-center gap-3 sm:gap-4">
               <button
                 onClick={clearChat}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/[0.05] bg-white/[0.03] hover:bg-white/[0.08] hover:border-red-900/30 text-[9px] font-bold text-zinc-100 tracking-[0.2em] uppercase transition-all duration-300 shadow-lg shadow-black/50"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.03] bg-white/[0.01] hover:bg-white/[0.03] hover:text-zinc-200 text-[9px] font-medium text-zinc-400 tracking-widest uppercase transition-all duration-300"
               >
-                <Plus size={12} strokeWidth={2.5} />
+                <Plus size={11} strokeWidth={1.5} />
                 <span className="hidden sm:inline">New Research</span>
                 <span className="sm:hidden">New</span>
               </button>
@@ -421,7 +418,7 @@ export default function Home() {
                 className="py-24 flex justify-center"
               >
                 {/* Issue #5 fixed: 3-ring swarm loader replaces single animate-spin ring */}
-                <SwarmLoader stageText={LOADING_STAGES[loadingStage]} queryText={query} />
+                <SwarmLoader stageText={LOADING_STAGES[loadingStage]} />
               </motion.div>
             )}
 
