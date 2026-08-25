@@ -74,10 +74,10 @@ body {
    ───────────────────────────────────────────────────────────── */
 
 .report-body {
-  color: #f1f5f9;
+  color: #a1a1aa;
   font-size: 1.05rem;
-  line-height: 1.8;
-  font-weight: 400;
+  line-height: 1.9;
+  font-weight: 300;
   letter-spacing: 0.015em;
   overflow-x: auto;
   word-break: break-words;
@@ -147,7 +147,7 @@ body {
 .report-body p {
   margin-top: 0;
   margin-bottom: 1.6em;
-  color: #f1f5f9;
+  color: #d1d5db;
 }
 
 /* First paragraph — editorial lead size */
@@ -174,8 +174,8 @@ body {
 /* ── Bold & Italic ── */
 .report-body strong,
 .report-body b {
-  color: #ffffff;
-  font-weight: 600;
+  color: #e4e4e7;
+  font-weight: 500;
 }
 .report-body em,
 .report-body i {

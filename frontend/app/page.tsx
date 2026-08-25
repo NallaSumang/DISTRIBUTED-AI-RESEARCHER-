@@ -119,7 +119,7 @@ function SwarmLoader({ stageText }: { stageText: string }) {
         <div className="absolute inset-[18px] rounded-full bg-red-900/20 animate-pulse" />
       </div>
       <div className="text-center">
-        <p className="text-[11px] font-light tracking-[0.25em] text-red-500/80 uppercase animate-pulse">
+        <p className="text-[11px] font-medium tracking-[0.25em] text-red-500 uppercase animate-pulse drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
           {stageText}
         </p>
       </div>
@@ -366,13 +366,31 @@ export default function Home() {
                 <span className="sm:hidden">New</span>
               </button>
 
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase">
-                <Globe size={11} strokeWidth={1.5} />
-                <span>Live Search</span>
+              <div 
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.03] bg-white/[0.01] text-[9px] font-medium text-zinc-400 tracking-widest uppercase cursor-default"
+                title="System Status: Web Search Engine is Online"
+              >
+                <Globe size={11} strokeWidth={1.5} className="text-zinc-500" />
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                  </div>
+                  <span>Web Search: Online</span>
+                </div>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_12px_rgba(127,29,29,0.1)]">
-                <Zap size={11} strokeWidth={1.5} />
-                <span>Llama 3.3</span>
+              <div 
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-red-900/20 bg-red-950/20 text-[9px] font-medium text-red-700/80 tracking-widest uppercase shadow-[0_0_12px_rgba(127,29,29,0.1)] cursor-default"
+                title="Active Model: Qwen 3.6 (Primary) / Llama 3 (Fallback)"
+              >
+                <Zap size={11} strokeWidth={1.5} className="text-red-700/80" />
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+                  </div>
+                  <span>Model: Qwen / Llama 3</span>
+                </div>
               </div>
             </div>
           </header>

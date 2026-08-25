@@ -87,9 +87,9 @@ We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence throug
 The aesthetics are designed to be clean, professional, and readable for long-form data.
 
 - **Deep Aesthetics**: Built on a `#030000` true-black canvas with subtle red gradients, floating ember particles, and a scanning laser line powered by custom CSS `@keyframes`.
-- **Typography System**: We completely bypassed Tailwind's prose modifiers to build a hand-tuned `.report-body` class. It features refined gradients on H1 headings, dark red accent bars for H2s, Catppuccin-styled code blocks, and ghost-underlined links.
+- **Typography System**: We completely bypassed Tailwind's prose modifiers to build a hand-tuned `.report-body` class. It features lightweight Zinc-400 fonts for editorial elegance, refined gradients on H1 headings, dark red accent bars for H2s, Catppuccin-styled code blocks, and ghost-underlined links.
 - **Smart Components**: The `ErrorToast` handles backend cold-starts gracefully via Framer Motion, and the `SidebarContent` is deeply memoized to prevent React re-render flashes during typing.
-- **Agentic UX**: Features a "New Research" button for instant context-clearing without page reloads, and a progressive glassmorphism Swarm Loader that displays the active query while cycling through real-time swarm execution stages.
+- **Agentic UX**: Features a "New Research" button for instant context-clearing, and professional telemetry status badges with pulsing indicators to expose system state (e.g., active model, search engine status).
 
 ---
 
