@@ -70,10 +70,10 @@ API_KEY_NAME = "x-api-key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
 
 def verify_api_key(api_key: str = Security(api_key_header)):
-    expected_api_key = os.getenv("API_MANUAL_SECRET_KEY")
+    expected_api_key = os.getenv("API_SECRET_KEY") or os.getenv("API_MANUAL_SECRET_KEY")
     if not expected_api_key:
         # In production, if this isn't set, reject everything.
-        raise HTTPException(status_code=500, detail="API_MANUAL_SECRET_KEY not configured on server")
+        raise HTTPException(status_code=500, detail="API_SECRET_KEY not configured on server")
     if api_key != expected_api_key:
         raise HTTPException(status_code=401, detail="Invalid API Key")
     return api_key

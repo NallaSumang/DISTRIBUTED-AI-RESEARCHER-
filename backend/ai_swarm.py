@@ -18,7 +18,7 @@ class AgentState(TypedDict):
 
 # Planner: lightweight — only needs a short JSON list output
 planner_llm = ChatGroq(
-    model="qwen/qwen3.6-27b",
+    model="llama-3.3-70b-versatile",
     temperature=0,
     max_tokens=512,
     api_key=os.getenv("GROQ_API_KEY")
@@ -26,7 +26,7 @@ planner_llm = ChatGroq(
 
 # Writer: needs large output budget for full detailed reports
 writer_llm = ChatGroq(
-    model="qwen/qwen3.6-27b",
+    model="llama-3.3-70b-versatile",
     temperature=0,
     max_tokens=8192,
     api_key=os.getenv("GROQ_API_KEY")
