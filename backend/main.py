@@ -26,8 +26,13 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-# --- RATE LIMITING: 5 research requests per minute per IP ---
-_rate_limit_store: dict[str, list[float]] = defaultdict(list)
+# --- REDIS CONNECTION ---
+redis_uri = os.getenv('UPSTASH_REDIS_URI')
+if not redis_uri:
+    raise RuntimeError("UPSTASH_REDIS_URI environment variable not set")
+redis_client = redis.from_url(redis_uri)
+
+# --- RATE LIMITING (Redis Backed): 5 research requests per minute per IP ---
 RATE_LIMIT = 5
 RATE_WINDOW = 60
 
@@ -36,18 +41,20 @@ async def rate_limit_middleware(request: Request, call_next):
     # Only rate-limit the research endpoint
     if request.url.path == "/api/research" and request.method == "POST":
         client_ip = request.client.host if request.client else "unknown"
-        now = time.time()
-        _rate_limit_store[client_ip] = [t for t in _rate_limit_store[client_ip] if now - t < RATE_WINDOW]
-        if len(_rate_limit_store[client_ip]) >= RATE_LIMIT:
-            raise HTTPException(status_code=429, detail="Too many requests. Please wait a minute.")
-        _rate_limit_store[client_ip].append(now)
+        redis_key = f"rate_limit:{client_ip}"
+        
+        try:
+            current = redis_client.incr(redis_key)
+            if current == 1:
+                redis_client.expire(redis_key, RATE_WINDOW)
+                
+            if current > RATE_LIMIT:
+                raise HTTPException(status_code=429, detail="Too many requests. Please wait a minute.")
+        except redis.RedisError as e:
+            # If Redis fails, log it and let the request pass (fail open) rather than breaking the API
+            print(f"Redis rate limit error: {e}")
+            
     return await call_next(request)
-
-# --- REDIS CONNECTION ---
-redis_uri = os.getenv('UPSTASH_REDIS_URI')
-if not redis_uri:
-    raise RuntimeError("UPSTASH_REDIS_URI environment variable not set")
-redis_client = redis.from_url(redis_uri)
 
 # --- REQUEST MODEL WITH VALIDATION ---
 class ResearchRequest(BaseModel):
