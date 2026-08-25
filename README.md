@@ -66,9 +66,9 @@ This system replaces the single-threaded LLM call model with a genuine multi-age
 ### 🔄 The Data Flow
 
 1. **Request**: You type a query and hit Execute. Next.js instantly proxies this to FastAPI, which pushes the job to Redis and returns a UUID in < 100ms.
-2. **Polling**: The UI spins up a gorgeous 3-ring `SwarmLoader` and pings for updates every 2 seconds.
+2. **Polling**: The UI spins up a `SwarmLoader` and pings for updates every 2 seconds.
 3. **Execution**: A background Python worker wakes up from its `BRPOP` sleep, grabs the job, and unleashes the AI swarm.
-4. **Delivery**: The report is saved to Redis and permanently archived in Supabase. The frontend catches the completed status, kills the polling loop, and renders the Markdown beautifully.
+4. **Delivery**: The report is saved to Redis and permanently archived in Supabase. The frontend catches the completed status, kills the polling loop, and renders the Markdown.
 
 ---
 
@@ -76,18 +76,18 @@ This system replaces the single-threaded LLM call model with a genuine multi-age
 
 We use a Directed Acyclic Graph (DAG) via LangGraph to route intelligence through specialized agents, backed by a **Multi-Model Fallback Chain**. If the primary model (Qwen) is rate-limited or unavailable, the system cascades through Llama 3 8B, Mixtral 8x7B, Llama 3.3 70B, and Gemma 2.
 
-1. **The Architect**: Takes your raw query and breaks it into 3–5 targeted sub-queries using structured JSON. A robust Regex engine parses the output to handle varying LLM markdown formats.
-2. **The Scouts**: We fire off DuckDuckGo or Tavily searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1.
-3. **The Synthesizer**: Armed with a truncated context window and a strict output token limit, this agent fuses all the scout data into a master Markdown report with citations — safely tuned to operate within free tier API constraints.
+1. **The Architect**: Takes your raw query and breaks it into exactly 5 targeted sub-queries using structured JSON. A robust Regex engine parses the output to handle varying LLM markdown formats.
+2. **The Scouts**: We fire off DuckDuckGo or Tavily searches *in parallel* via `asyncio.gather`. There is no blocking I/O here; 5 searches take the exact same time as 1. Each search pulls the top 6 results for maximum context.
+3. **The Synthesizer**: Armed with a truncated context window (up to 30 results) and a strict output token limit, this agent fuses all the scout data into a master Markdown report with citations — safely tuned to operate within free tier API constraints.
 
 ---
 
 ## 🎨 UI & Design System
 
-The aesthetics are unapologetically premium — dubbed the *Sumang Signature Edition*.
+The aesthetics are designed to be clean, professional, and readable for long-form data.
 
 - **Deep Aesthetics**: Built on a `#030000` true-black canvas with subtle red gradients, floating ember particles, and a scanning laser line powered by custom CSS `@keyframes`.
-- **Typography System**: We completely bypassed Tailwind's prose modifiers to build a hand-tuned `.report-body` class. It features crisp `#f5f5f5` headings with red accent bars, Catppuccin-styled code blocks, and ghost-underlined links.
+- **Typography System**: We completely bypassed Tailwind's prose modifiers to build a hand-tuned `.report-body` class. It features refined gradients on H1 headings, dark red accent bars for H2s, Catppuccin-styled code blocks, and ghost-underlined links.
 - **Smart Components**: The `ErrorToast` handles backend cold-starts gracefully via Framer Motion, and the `SidebarContent` is deeply memoized to prevent React re-render flashes during typing.
 
 ---
